@@ -1195,22 +1195,8 @@ Fixpoint plus' (n : nat) (m : nat) : nat :=
     定义。但这个定义需要违背上述的限制，以此来让 Coq 拒绝。（如果您决定将这个可选
     练习作为作业，请确保您将您的解答注释掉以防止 Coq 拒绝执行整个文件。） *)
 
-
-Fixpoint not_accepted (n : nat) : nat :=
-  match n with
-  | O => not_accepted (S O)
-  | S O => S O
-  | S n' => S (not_accepted n')
-  end.
-
 (* 请在此处解答
-TODO : 参考来的答案
-Fixpoint not_accepted (n : nat) : nat :=
-  match n with
-  | O => not_accepted (S O)
-  | S O => S O
-  | S n' => S (not_accepted n')
-  end.
+(* TODO *)
 
     [] *)
 
@@ -1315,13 +1301,8 @@ Inductive bin : Type :=
 (** 补全下面二进制自增函数 [incr] 的定义。并且补全二进制数与一进制自然数转换的
     函数 [bin_to_nat]。 *)
 
-Fixpoint incr (m: bin) : bin :=
-  match m with
-    | Z => B Z
-    | A n' => B n'
-    | B n' => A (B n')
-  end.
-
+Fixpoint incr (m:bin) : bin
+  (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
 
 Fixpoint bin_to_nat (m:bin) : nat
   (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.

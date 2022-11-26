@@ -1,4 +1,8 @@
-# 软件基础（中译版）
+# Personal Note for Software Foundations
+
+现在还是私密仓库
+
+# fork from 软件基础（中译版）
 [![CircleCI](https://circleci.com/gh/Coq-zh/SF-zh.svg?style=svg)](https://circleci.com/gh/Coq-zh/SF-zh)
 
 Chinese translation of _[Software Foundations](https://softwarefoundations.cis.upenn.edu/)_
