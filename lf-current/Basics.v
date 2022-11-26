@@ -1196,12 +1196,6 @@ Fixpoint plus' (n : nat) (m : nat) : nat :=
     练习作为作业，请确保您将您的解答注释掉以防止 Coq 拒绝执行整个文件。） *)
 
 
-Fixpoint not_accepted (n : nat) : nat :=
-  match n with
-  | O => not_accepted (S O)
-  | S O => S O
-  | S n' => S (not_accepted n')
-  end.
 
 (* 请在此处解答
 TODO : 参考来的答案
@@ -1319,36 +1313,83 @@ Fixpoint incr (m: bin) : bin :=
   match m with
     | Z => B Z
     | A n' => B n'
-    | B n' => A (B n')
+    | B n' => A (incr n') (* 考虑进位 *)
   end.
 
 
-Fixpoint bin_to_nat (m:bin) : nat
-  (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
+(* 验证一下 *)
+Compute incr (        Z  ).
+Compute incr (      B Z  ).
+Compute incr (   A (B Z) ).
+Compute incr (   B (B Z) ).
+Compute incr (A (A (B Z))).
+Compute incr (B (A (B Z))).
+Compute incr (A (B (B Z))).   
+
+
+Fixpoint bin_to_nat (m:bin) : nat :=
+  (* 将本行替换成 ":= _你的_定义_ ." *) 
+  match m with
+    | Z => O
+    | A n' => 2 * bin_to_nat(n')
+    | B n' => 1 + 2 * bin_to_nat(n')
+  end.
+
+(* 验证一下 *)
+Compute bin_to_nat(        Z  ).
+Compute bin_to_nat(      B Z  ).
+Compute bin_to_nat(   A (B Z) ).
+Compute bin_to_nat(   B (B Z) ).
+Compute bin_to_nat(A (A (B Z))).
+Compute bin_to_nat(B (A (B Z))).
+Compute bin_to_nat(A (B (B Z))).   
 
 (** 下面这些针对单增函数和二进制转换函数的“单元测试”可以验算你的定义的正确性。
     当然，这些单元测试并不能确保你的定义在所有输入下都是正确的！我们在下一章的
     末尾会重新回到这个话题。 *)
 
 Example test_bin_incr1 : (incr (B Z)) = A (B Z).
-(* 请在此处解答 *) Admitted.
+(* 请在此处解答 *) 
+Proof.
+  simpl.
+  reflexivity.
+Qed.
 
 Example test_bin_incr2 : (incr (A (B Z))) = B (B Z).
-(* 请在此处解答 *) Admitted.
+(* 请在此处解答 *)
+Proof.
+  simpl.
+  reflexivity.
+Qed.
 
 Example test_bin_incr3 : (incr (B (B Z))) = A (A (B Z)).
-(* 请在此处解答 *) Admitted.
+Proof.
+  simpl.
+  reflexivity.
+Qed.
 
 Example test_bin_incr4 : bin_to_nat (A (B Z)) = 2.
-(* 请在此处解答 *) Admitted.
+(* 请在此处解答 *) 
+Proof.
+  simpl.
+  reflexivity.
+Qed.
 
 Example test_bin_incr5 :
         bin_to_nat (incr (B Z)) = 1 + bin_to_nat (B Z).
-(* 请在此处解答 *) Admitted.
+(* 请在此处解答 *) 
+Proof.
+  simpl.
+  reflexivity.
+Qed.
 
 Example test_bin_incr6 :
         bin_to_nat (incr (incr (B Z))) = 2 + bin_to_nat (B Z).
-(* 请在此处解答 *) Admitted.
+(* 请在此处解答 *) 
+Proof.
+  simpl.
+  reflexivity.
+Qed.
 
 (** [] *)
 

@@ -2,6 +2,8 @@
 *.v.d
 *.report
 *.vo
+*.vok
+*.vos
 *.aux
 *.cmx
 *.glob
@@ -52,3 +54,5 @@ vfa/redblack.ml
 vfa/redblack.mli
 vfa/searchtree.ml
 vfa/searchtree.mli
+
+*.zip

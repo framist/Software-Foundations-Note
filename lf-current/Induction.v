@@ -31,15 +31,14 @@ From LF Require Export Basics.
      - In CoqIDE: Open [Basics.v]; then, in the "Compile" menu, click
        on "Compile Buffer".
 
-     - From the command line: Generate a [Makefile] using the [coq_makefile]
+     - 从命令行: Generate a [Makefile] using the [coq_makefile]
        utility, that comes installed with Coq (if you obtained the whole
        volume as a single archive, a [Makefile] should already exist
        and you can skip this step):
 
          [coq_makefile -f _CoqProject *.v -o Makefile]
 
-       Note: You should rerun that command whenever you add or remove Coq files
-       to the directory.
+       注意：每当添加或删除Coq文件时，都应重新运行该命令到目录。
 
        Then you can compile [Basics.v] by running [make] with the corresponding
        [.vo] file as a target:
@@ -55,9 +54,9 @@ From LF Require Export Basics.
 
          [coqc -Q . LF Basics.v]
 
-       But [make] also calculates dependencies between source files to compile
-       them in the right order, so [make] should generally be prefered over
-       explicit [coqc].
+       但 [make] 还计算要编译的源文件之间的依赖关系
+       它们以正确的顺序排列，因此通常应该首选[make]而不是
+       显式 [COQC]。
 
     如果你遇到了问题（例如，稍后你可能会在本文件中遇到缺少标识符的提示），
     那可能是因为没有正确设置 Coq 的“加载路径”。指令 [Print LoadPath.]

@@ -2,6 +2,11 @@
 
 现在还是私密仓库
 
+贡献：
+
+- 完成题解
+- 笔记 （在 `./软件基础 课程笔记/`）
+
 # fork from 软件基础（中译版）
 [![CircleCI](https://circleci.com/gh/Coq-zh/SF-zh.svg?style=svg)](https://circleci.com/gh/Coq-zh/SF-zh)
 
