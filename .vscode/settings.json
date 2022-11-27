@@ -1,4 +1,3 @@
 {
-    "coqtop.binPath": "/snap/bin/",
-    "commentTranslate.multiLineMerge": true
+    "coqtop.binPath": "/snap/bin/"
 }

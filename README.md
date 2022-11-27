@@ -6,8 +6,16 @@
 
 - 完成题解
 - 笔记 （在 `./软件基础 课程笔记/`）
+- 其他  
+  - 修正部分的翻译瑕疵，增加部分翻译 *一点无效的工作*
+  - 清理仓库 *修剪了`.git/`文件的大小*
 
-# fork from 软件基础（中译版）
+---
+
+***fork from Coq-zh/SF-zh***
+
+# 软件基础（中译版）
+
 [![CircleCI](https://circleci.com/gh/Coq-zh/SF-zh.svg?style=svg)](https://circleci.com/gh/Coq-zh/SF-zh)
 
 Chinese translation of _[Software Foundations](https://softwarefoundations.cis.upenn.edu/)_

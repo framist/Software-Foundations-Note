@@ -38,8 +38,7 @@ Compute (fst (pair 3 5)).
 
 Notation "( x , y )" := (pair x y).
 
-(** The new notation can be used both in expressions and in pattern
-    matches. *)
+(** 新符号既可用于表达式，也可用于模式匹配。 *)
 
 Compute (fst (3,5)).
 
@@ -65,6 +64,13 @@ Definition swap_pair (p : natprod) : natprod :=
     elements [x] and [y], whereas, for example, the definition of [minus] in
     [Basics] performs pattern matching on the values [n]
     and [m]:
+    请注意，一对上的模式匹配（带括号：[（x， y）]）
+    不要与“多重模式”语法混淆
+    （没有括号：[x， y]）我们之前看到的。
+    上面的示例说明了一对
+    元素 [x] 和 [y]，而例如，[减号] 的定义
+    [基础知识] 对值 [n] 执行模式匹配
+    和 [m]：
 
        Fixpoint minus (n m : nat) : nat :=
          match n, m with
@@ -73,9 +79,7 @@ Definition swap_pair (p : natprod) : natprod :=
          | S n', S m' => minus n' m'
          end.
 
-    The distinction is minor, but it is worth knowing that they
-    are not the same. For instance, the following definitions are
-    ill-formed:
+    区别很小，但是值得知道它们不一样。例如，以下定义不明显：
 
         (* Can't match on a pair with multiple patterns: *)
         Definition bad_fst (p : natprod) : nat :=
@@ -126,14 +130,20 @@ Proof.
 Theorem snd_fst_is_swap : forall (p : natprod),
   (snd p, fst p) = swap_pair p.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros p. destruct p as [n m]. 
+  simpl. reflexivity. Qed.
+
 (** [] *)
 
 (** **** 练习：1 星, standard, optional (fst_swap_is_snd)  *)
 Theorem fst_swap_is_snd : forall (p : natprod),
   fst (swap_pair p) = snd p.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros p. destruct p as [n m].
+  simpl. reflexivity. Qed. 
+
 (** [] *)
 
 (* ################################################################# *)
@@ -198,6 +208,8 @@ Fixpoint repeat (n count : nat) : natlist :=
   | S count' => n :: (repeat n count')
   end.
 
+Compute repeat 4 2.
+
 (* ----------------------------------------------------------------- *)
 (** *** Length *)
 
@@ -208,6 +220,8 @@ Fixpoint length (l:natlist) : nat :=
   | nil => O
   | h :: t => S (length t)
   end.
+
+Compute length ( repeat 4 2).
 
 (* ----------------------------------------------------------------- *)
 (** *** Append *)
@@ -266,26 +280,51 @@ Proof. reflexivity.  Qed.
     完成以下 [nonzeros]、[oddmembers] 和 [countoddmembers] 的定义，
     你可以查看测试函数来理解这些函数应该做什么。 *)
 
-Fixpoint nonzeros (l:natlist) : natlist
-  (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
+Fixpoint nonzeros (l:natlist) : natlist :=
+  (* 将本行替换成 ":= _你的_定义_ ." *)
+  match l with
+  | nil => nil
+  | h :: t => match hd 0 l with
+              | O => nonzeros t
+              | S n' => h :: nonzeros t
+              end
+  end.
+(* 另一种写法 *)
+Fixpoint nonzeros' (l:natlist) : natlist :=
+  match l with
+  | nil => nil
+  | h :: t => if(h =? 0) 
+              then nonzeros' t 
+              else h :: nonzeros' t 
+end.
+
 
 Example test_nonzeros:
   nonzeros [0;1;0;2;3;0;0] = [1;2;3].
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  Proof. reflexivity.  Qed.
 
-Fixpoint oddmembers (l:natlist) : natlist
-  (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
+Fixpoint oddmembers (l:natlist) : natlist :=
+  (* 将本行替换成 ":= _你的_定义_ ." *)
+  match l with
+  | nil => nil
+  | h :: t => if(negb(oddb h)) 
+              then oddmembers t 
+              else h :: oddmembers t 
+  end.
 
 Example test_oddmembers:
   oddmembers [0;1;0;2;3;0;0] = [1;3].
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  Proof. reflexivity.  Qed.
 
 Definition countoddmembers (l:natlist) : nat
   (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
 
 Example test_countoddmembers1:
   countoddmembers [1;0;3;1;4;5] = 4.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  Proof. reflexivity.  Qed.
 
 Example test_countoddmembers2:
   countoddmembers [0;2;4] = 0.
@@ -293,7 +332,8 @@ Example test_countoddmembers2:
 
 Example test_countoddmembers3:
   countoddmembers nil = 0.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  Proof. reflexivity.  Qed.
 (** [] *)
 
 (** **** 练习：3 星, advanced (alternate) 

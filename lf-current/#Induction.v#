@@ -251,9 +251,6 @@ Qed.
     请简要说明一下 [destruct] 策略和 [induction] 策略之间的区别。
 
 (* 请在此处解答 *)
-一个是分类讨论，一个是归纳
-引入的前提也不一样
-
 *)
 
 (* 请勿修改下面这一行： *)
@@ -413,7 +410,6 @@ Proof.
     定理：加法满足交换律。
 
     Proof: (* 请在此处解答 *)
-    TODO
 *)
 
 (* 请勿修改下面这一行： *)
@@ -427,8 +423,7 @@ Definition manual_grade_for_plus_comm_informal : option (nat*string) := None.
 
     定理：对于任何 [n]，均有 [true = n =? n]。
 
-    证明： (* 请在此处解答 *) 
-    TODO 
+    证明： (* 请在此处解答 *)
 *)
 (** [] *)
 
@@ -571,10 +566,9 @@ Definition manual_grade_for_binary_commute : option (nat*string) := None.
     This is a further continuation of the previous exercises about
     binary numbers.  You may find you need to go back and change your
     earlier definitions to get things to work here.
-    这是之前关于二进制数的继续。
-     您可能会发现您需要返回并更改您的早期定义，让事情在这里工作。
 
-    (a) 首先，编写一个函数将自然数转换为二进制数字。 *)
+    (a) First, write a function to convert natural numbers to binary
+        numbers. *)
 
 Fixpoint nat_to_bin (n:nat) : bin
   (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
