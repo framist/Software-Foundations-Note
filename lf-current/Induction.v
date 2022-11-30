@@ -412,8 +412,8 @@ Proof.
 
     定理：加法满足交换律。
 
-    Proof: (* 请在此处解答 *)
-    TODO
+    Proof: (* TODO 请在此处解答 *)
+    
 *)
 
 (* 请勿修改下面这一行： *)
@@ -427,8 +427,8 @@ Definition manual_grade_for_plus_comm_informal : option (nat*string) := None.
 
     定理：对于任何 [n]，均有 [true = n =? n]。
 
-    证明： (* 请在此处解答 *) 
-    TODO 
+    证明： (* TODO 请在此处解答 *) 
+    
 *)
 (** [] *)
 
@@ -442,15 +442,34 @@ Definition manual_grade_for_plus_comm_informal : option (nat*string) := None.
 Theorem plus_swap : forall n m p : nat,
   n + (m + p) = m + (n + p).
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros n m p.
+  rewrite -> plus_assoc.
+  rewrite -> plus_assoc.
+  assert (H: n + m = m + n).
+  { rewrite -> plus_comm. reflexivity. }
+  rewrite -> H. reflexivity. Qed.
 
 (** 现在证明乘法交换律。（你在证明过程中可能想要定义并证明一个辅助定理。
     提示：[n * (1 + k)] 是什么？） *)
 
+Theorem mult_n_Sm : forall m n : nat,
+  n * (S m) = n + n * m.
+Proof.
+  intros n m. induction m as [| m' IHm' ].
+  - simpl. reflexivity.
+  - simpl. rewrite -> IHm'. rewrite -> plus_swap. reflexivity.
+Qed.
+
 Theorem mult_comm : forall m n : nat,
   m * n = n * m.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *) 
+  intros n m. induction m as [| m' IHm'].
+  - simpl. rewrite mult_0_r. reflexivity.
+  - simpl. rewrite mult_n_Sm. rewrite -> IHm'. reflexivity.
+Qed. 
+  
 (** [] *)
 
 (** **** 练习：3 星, standard, optional (more_exercises) 
@@ -464,31 +483,58 @@ Check leb.
 Theorem leb_refl : forall n:nat,
   true = (n <=? n).
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  (* 使用归纳法证明 *)
+  intros n. induction n as [| n' IHn'].
+  - simpl. reflexivity.
+  - simpl. rewrite <- IHn'. reflexivity.
+Qed. 
 
 Theorem zero_nbeq_S : forall n:nat,
   0 =? (S n) = false.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  (* 只用化简和改写来证明 *)
+  simpl. (* TODO: 这里 出现了奇怪的蕴含式 nat -> false = false 是否意味这什么？ *)
+  intros H.
+  reflexivity.
+Qed. 
 
 Theorem andb_false_r : forall b : bool,
   andb b false = false.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  (* 分类讨论 *)
+  intros b. destruct b eqn:E.
+  - simpl. reflexivity.
+  - simpl. reflexivity.
+Qed.
 
 Theorem plus_ble_compat_l : forall n m p : nat,
   n <=? m = true -> (p + n) <=? (p + m) = true.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  (* 使用归纳法证明 归纳 p *)
+  intros n m p H. induction p as [| p' IHp'].
+  - simpl. rewrite -> H. reflexivity.
+  - simpl. rewrite -> IHp'. reflexivity. 
+Qed.
+
 
 Theorem S_nbeq_0 : forall n:nat,
   (S n) =? 0 = false.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  (* 只用化简和改写来证明 *)
+  (* TODO: 为何不先证明 =? 的交换率？ *)
+  simpl. reflexivity. Qed.
 
 Theorem mult_1_l : forall n:nat, 1 * n = n.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  (* 只用化简和改写来证明 *)
+  intros n. simpl. rewrite <- plus_n_O. reflexivity.
+Qed.
 
 Theorem all3_spec : forall b c : bool,
     orb
@@ -497,17 +543,83 @@ Theorem all3_spec : forall b c : bool,
                (negb c))
   = true.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  (* 分类讨论 *)
+  intros [] [].
+  - reflexivity.
+  - reflexivity.
+  - reflexivity.
+  - reflexivity.
+Qed.
 
+(* TODO: 可以尝试证明一下排中律, 但不是说直觉主义逻辑不接受排中律？ 
+可能是因为 a: bool 而非命题？
+*)
+Theorem 排中律 : forall a: bool,
+    a || (negb a) = true.
+Proof.
+  intros [].
+  - reflexivity.
+  - reflexivity.
+Qed.
+
+(* 乘法分配率 *)
 Theorem mult_plus_distr_r : forall n m p : nat,
   (n + m) * p = (n * p) + (m * p).
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *) 
+  (* 使用归纳法证明 归纳 p *)
+  intros n m p. induction p as [| p' IHp'].
+  - rewrite -> mult_0_r. 
+    rewrite -> mult_0_r. 
+    rewrite -> mult_0_r. reflexivity.
+  - rewrite -> mult_n_Sm.
+    rewrite -> mult_n_Sm.
+    rewrite -> mult_n_Sm.
+    rewrite -> IHp'.
+    rewrite -> plus_assoc.
+    rewrite -> plus_assoc.
+    (* TODO: 接下来不断用交换律可证明，就是不断代换，能证，不过实在有点麻烦 *)
+    Abort.
 
+(* 乘法分配率 *)
+Theorem mult_plus_distr_r : forall n m p : nat,
+  (n + m) * p = (n * p) + (m * p).
+Proof.
+  (* 请在此处解答 *) 
+  (* 使用归纳法证明 归纳 n *)
+  intros n m p. induction n as [|n' IHn'].
+  - simpl. reflexivity.
+  - simpl. rewrite -> IHn'. rewrite -> plus_assoc. reflexivity.
+Qed. 
+
+(* 先证明一个引理 *)
+Theorem order_indepent_mult : forall m n p : nat, n * p * m = m * n * p.
+Proof.
+  intros m n p. rewrite -> mult_comm. simpl. induction m as [|m' IHm'].
+  - simpl. reflexivity.
+  - simpl. rewrite -> mult_plus_distr_r. rewrite -> IHm'. reflexivity.
+Qed.
+
+(* 乘法结合率 *)
 Theorem mult_assoc : forall n m p : nat,
   n * (m * p) = (n * m) * p.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  (* 使用归纳法证明 归纳 n *)
+  intros m n p.  induction n as [|n' IHn'].
+  - simpl. rewrite <- mult_n_O. simpl. reflexivity.
+  - simpl. 
+    rewrite -> mult_comm.  
+    rewrite -> mult_n_Sm. 
+    rewrite -> mult_plus_distr_r.  
+    rewrite -> mult_plus_distr_r. 
+    rewrite -> mult_comm. 
+    rewrite -> order_indepent_mult. 
+    reflexivity.
+Qed.
+(* TODO: 同上，实在有点麻烦 *)
+
 (** [] *)
 
 (** **** 练习：2 星, standard, optional (eqb_refl) 
@@ -519,7 +631,12 @@ Proof.
 Theorem eqb_refl : forall n : nat,
   true = (n =? n).
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros n. induction n as [|n' IHn'].
+  - simpl. reflexivity.
+  - simpl. rewrite <- IHn'. reflexivity.
+Qed.
+
 (** [] *)
 
 (** **** 练习：2 星, standard, optional (plus_swap') 
@@ -568,22 +685,19 @@ Definition manual_grade_for_binary_commute : option (nat*string) := None.
 
 (** **** 练习：5 星, advanced (binary_inverse) 
 
-    This is a further continuation of the previous exercises about
-    binary numbers.  You may find you need to go back and change your
-    earlier definitions to get things to work here.
     这是之前关于二进制数的继续。
-     您可能会发现您需要返回并更改您的早期定义，让事情在这里工作。
+    您可能会发现您需要返回并更改您的早期定义，让事情在这里工作。
 
     (a) 首先，编写一个函数将自然数转换为二进制数字。 *)
 
 Fixpoint nat_to_bin (n:nat) : bin
   (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
 
-(** Prove that, if we start with any [nat], convert it to binary, and
-    convert it back, we get the same [nat] we started with.  (Hint: If
-    your definition of [nat_to_bin] involved any extra functions, you
-    may need to prove a subsidiary lemma showing how such functions
-    relate to [nat_to_bin].) *)
+(** 证明，如果我们从任何 [nat] 开始，将其转换为二进制，并且
+    转换回来，我们得到的 [nat] 与我们开始时相同。 
+    （提示：如果您对 [nat_to_bin] 的定义涉及任何额外的功能，
+    您可能需要证明一个次要引理，显示这些引理是如何运作的
+    与 [nat_to_bin] 相关。*)
 
 Theorem nat_bin_nat : forall n, bin_to_nat (nat_to_bin n) = n.
 Proof.
@@ -592,12 +706,11 @@ Proof.
 (* 请勿修改下面这一行： *)
 Definition manual_grade_for_binary_inverse_a : option (nat*string) := None.
 
-(** (b) One might naturally expect that we should also prove the
-        opposite direction -- that starting with a binary number,
-        converting to a natural, and then back to binary should yield
-        the same number we started with.  However, this is not the
-        case!  Explain (in a comment) what the problem is. *)
-
+(** (b) 人们可能会自然地期望我们也应该证明
+        相反的方向 - 以二进制数开头，
+        转换为自然，然后再转换回二进制应该产生
+        与我们开始的数字相同。 但是情况并非如此
+        解释（在评论中）问题所在。 *)
 (* 请在此处解答 *)
 
 (* 请勿修改下面这一行： *)
@@ -615,6 +728,17 @@ Definition manual_grade_for_binary_inverse_b : option (nat*string) := None.
         proof -- that will allow the main proof to make progress.) Don't
         define this using [nat_to_bin] and [bin_to_nat]! *)
 
+(** (c) 定义一个规范化函数——即一个函数
+        [normalize] 直接从 [bin] 到 [bin] （也就是说_不要_
+        转换为 [nat] 并返回），以便对于任何二进制数
+        [b]，将 [b] 转换为自然数，然后再转换回二进制
+        [(normalize b)]。 证明给我看。 （警告：这部分有点
+        棘手 - 你最终可能会定义几个辅助引理。
+        找出您需要什么的一个好方法是从尝试开始
+        要证明主要陈述，请查看您卡住的地方，然后查看
+        如果你能找到一个引理——也许需要它自己的归纳
+        证明 - 这将使主要证明取得进展。不要
+        使用 [nat_to_bin] 和 [bin_to_nat] 定义它！ *)
 (* 请在此处解答 *)
 
 (* 请勿修改下面这一行： *)

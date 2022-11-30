@@ -1,6 +1,7 @@
-# Personal Note for Software Foundations
+# Note on Software Foundations
 
-现在还是私密仓库
+《软件基础》的个人笔记
+
 
 贡献：
 
