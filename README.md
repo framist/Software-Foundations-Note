@@ -1,7 +1,8 @@
 # Note on Software Foundations
 
-《软件基础》的个人笔记
+My note & solutions to the Software Foundations Book
 
+《软件基础》的个人笔记和习题解答
 
 贡献：
 
