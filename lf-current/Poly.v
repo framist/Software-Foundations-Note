@@ -132,6 +132,29 @@ Inductive grumble (X:Type) : Type :=
       - [e bool (b c 0)]
       - [c] *)
 (* 请在此处解答 *)
+Check d bool (b a 5). 
+Check d mumble (b a 5).
+Check d bool (b a 5).
+Check e bool true.
+Check e mumble (b c 0).
+Check c.
+(* 
+d bool (b a 5)
+	 : grumble bool
+d bool (b a 5)
+	 : grumble bool
+d mumble (b a 5)
+	 : grumble mumble
+d bool (b a 5)
+	 : grumble bool
+e bool true
+	 : grumble bool
+e mumble (b c 0)
+	 : grumble mumble
+c
+	 : mumble *)
+
+
 End MumbleGrumble.
 
 (* 请勿修改下面这一行： *)
@@ -296,6 +319,11 @@ Proof. reflexivity. Qed.
     这次我们会显示地给出参数。例如，假设我们写了如下定义： *)
 
 Fail Definition mynil := nil.
+(* The command has indeed failed with message:
+The following term contains unresolved implicit arguments:
+  nil
+More precisely: 
+- ?X: Cannot infer the implicit parameter X of nil whose type is "Type". *)
 
 (** （[Definition] 前面的 [Fail] 限定符可用于_'任何'_指令，
     它的作用是确保该指令在执行时确实会失败。如果该指令失败了，Coq
