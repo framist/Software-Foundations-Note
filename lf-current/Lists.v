@@ -888,25 +888,41 @@ Qed.
     填写 [eqblist] 的定义，它通过比较列表中的数字来判断是否相等。
     证明对于所有列表 [l]，[eqblist l l] 返回 [true]。 *)
 
-Fixpoint eqblist (l1 l2 : natlist) : bool
-  (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
+Fixpoint eqblist (l1 l2 : natlist) : bool :=
+  (* 将本行替换成 ":= _你的_定义_ ." *)
+  match l1, l2 with
+  | nil, nil => true
+  | _, nil => false
+  | nil, _ => false
+  | h1 :: t1, h2 :: t2 => if h1 =? h2 
+                          then eqblist t1 t2 
+                          else false 
+  end.
 
 Example test_eqblist1 :
   (eqblist nil nil = true).
- (* 请在此处解答 *) Admitted.
+ (* 请在此处解答 *)
+Proof. reflexivity. Qed.
 
 Example test_eqblist2 :
   eqblist [1;2;3] [1;2;3] = true.
-(* 请在此处解答 *) Admitted.
+(* 请在此处解答 *)
+Proof. reflexivity. Qed.
 
 Example test_eqblist3 :
   eqblist [1;2;3] [1;2;4] = false.
- (* 请在此处解答 *) Admitted.
+ (* 请在此处解答 *)
+Proof. reflexivity. Qed.
 
 Theorem eqblist_refl : forall l:natlist,
   true = eqblist l l.
-Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  Proof.
+    intros l. induction l as [| n l' IHl'].
+    - reflexivity.
+    - simpl. rewrite <- IHl'. rewrite <- eqb_refl. reflexivity.
+    (* assert (H: true = eqb n  n). { rewrite <- eqb_refl . reflexivity. }   *)
+  Qed.
 (** [] *)
 
 (* ================================================================= *)
@@ -918,7 +934,9 @@ Proof.
 Theorem count_member_nonzero : forall (s : bag),
   1 <=? (count 1 (1 :: s)) = true.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros s. simpl. reflexivity. Qed.
+
 (** [] *)
 
 (** 下面这条关于 [leb] 的引理可助你完成下一个证明。 *)
@@ -938,7 +956,14 @@ Proof.
 Theorem remove_does_not_increase_count: forall (s : bag),
   (count 0 (remove_one 0 s)) <=? (count 0 s) = true.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros s. induction s.
+  - simpl. reflexivity.
+  - simpl. induction n.
+    + simpl. rewrite -> leb_n_Sn. reflexivity.
+    + simpl. rewrite -> IHs. reflexivity. 
+Qed.
+
 (** [] *)
 
 (** **** 练习：3 星, standard, optional (bag_count_sum) 
@@ -946,7 +971,7 @@ Proof.
     写下一个用到函数 [count] 和 [sum] 的，关于袋子的有趣定理 [bag_count_sum]，
     然后证明它。（你可能会发现该证明的难度取决于你如何定义 [count]！） *)
 (* 请在此处解答
-
+(* TODO *)
     [] *)
 
 (** **** 练习：4 星, advanced (rev_injective) 
@@ -958,6 +983,15 @@ Proof.
     （这个问题既可以用简单的方式解决也可以用繁琐的方式来解决。） *)
 
 (* 请在此处解答 *)
+
+Theorem rev_是单射函数: forall (l1 l2 : natlist),
+  rev l1 = rev l2 -> l1 = l2.
+Proof.
+  intros l1 l2. induction l1 as [| n l' IHl'].
+  - simpl. intros H. rewrite -> H.
+  Abort. 
+(* TODO *)
+
 
 (* 请勿修改下面这一行： *)
 Definition manual_grade_for_rev_injective : option (nat*string) := None.
@@ -1036,17 +1070,21 @@ Definition option_elim (d : nat) (o : natoption) : nat :=
 (** **** 练习：2 星, standard (hd_error)  *)
  (** 用同样的思路修正之前的 [hd] 函数，使我们无需为 [nil] 的情况提供默认元素。  *)
 
-Definition hd_error (l : natlist) : natoption
-  (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
+Definition hd_error (l : natlist) : natoption :=
+  (* 将本行替换成 ":= _你的_定义_ ." *)
+  match l with
+  | nil => None
+  | a :: l => Some a
+end.
 
 Example test_hd_error1 : hd_error [] = None.
- (* 请在此处解答 *) Admitted.
+ (* 请在此处解答 *) reflexivity. Qed.
 
 Example test_hd_error2 : hd_error [1] = Some 1.
- (* 请在此处解答 *) Admitted.
+ (* 请在此处解答 *) reflexivity. Qed.
 
 Example test_hd_error3 : hd_error [5;6] = Some 5.
- (* 请在此处解答 *) Admitted.
+ (* 请在此处解答 *) reflexivity. Qed.
 (** [] *)
 
 (** **** 练习：1 星, standard, optional (option_elim_hd)  *)
@@ -1055,7 +1093,11 @@ Example test_hd_error3 : hd_error [5;6] = Some 5.
 Theorem option_elim_hd : forall (l:natlist) (default:nat),
   hd default l = option_elim default (hd_error l).
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros l. induction l.
+  - simpl. reflexivity.
+  - simpl. reflexivity.
+Qed.
 (** [] *)
 
 End NatList.
@@ -1084,7 +1126,9 @@ Definition eqb_id (x1 x2 : id) :=
 (** **** 练习：1 星, standard (eqb_id_refl)  *)
 Theorem eqb_id_refl : forall x, true = eqb_id x x.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *) 
+  intros x. destruct x.
+  simpl. rewrite <- eqb_refl. reflexivity. Qed.
 (** [] *)
 
 (** 现在我们定义偏映射的类型： *)
@@ -1125,7 +1169,8 @@ Theorem update_eq :
   forall (d : partial_map) (x : id) (v: nat),
     find x (update d x v) = Some v.
 Proof.
- (* 请在此处解答 *) Admitted.
+ (* 请在此处解答 *)
+  intros d x v. simpl. rewrite <- eqb_id_refl. reflexivity. Qed. 
 (** [] *)
 
 (** **** 练习：1 星, standard (update_neq)  *)
@@ -1133,7 +1178,8 @@ Theorem update_neq :
   forall (d : partial_map) (x y : id) (o: nat),
     eqb_id x y = false -> find x (update d y o) = find x d.
 Proof.
- (* 请在此处解答 *) Admitted.
+ (* 请在此处解答 *)
+ intros d x y o H. simpl. rewrite -> H. reflexivity. Qed.
 (** [] *)
 End PartialMap.
 
@@ -1148,6 +1194,7 @@ Inductive baz : Type :=
 (** 有_'多少'_个表达式具备类型 [baz]？（以注释说明。） *)
 
 (* 请在此处解答 *)
+(* TODO: 无穷个？ *)
 
 (* 请勿修改下面这一行： *)
 Definition manual_grade_for_baz_num_elts : option (nat*string) := None.
