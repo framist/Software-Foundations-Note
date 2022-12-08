@@ -367,17 +367,36 @@ Definition list123''' := [1; 2; 3].
 Theorem app_nil_r : forall (X:Type), forall l:list X,
   l ++ [] = l.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros X l. induction l.
+  - simpl. reflexivity.
+  - simpl. rewrite -> IHl. reflexivity. 
+Qed.   
 
 Theorem app_assoc : forall A (l m n:list A),
   l ++ m ++ n = (l ++ m) ++ n.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros A l m n.
+  induction l.
+  - (* l = nil *)
+    simpl.
+    reflexivity.
+  - (* l = cons n l' *)
+    simpl.
+    rewrite -> IHl.
+    reflexivity.
+Qed.
 
 Lemma app_length : forall (X:Type) (l1 l2 : list X),
   length (l1 ++ l2) = length l1 + length l2.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros X l1 l2. induction l1.
+  - simpl. reflexivity.
+  - simpl. rewrite -> IHl1. reflexivity. 
+Qed. 
+
 (** [] *)
 
 (** **** 练习：2 星, standard, optional (more_poly_exercises) 
@@ -387,12 +406,36 @@ Proof.
 Theorem rev_app_distr: forall X (l1 l2 : list X),
   rev (l1 ++ l2) = rev l2 ++ rev l1.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros X l1 l2.
+  induction l1 as [| h1 t1].
+  - (* l1 = nil *)
+    simpl.
+    rewrite -> app_nil_r.
+    reflexivity.
+  - (* l1 = cons h1 t1 *)
+    simpl.
+    rewrite -> IHt1.
+    rewrite -> app_assoc.
+    reflexivity.
+Qed.
 
 Theorem rev_involutive : forall X : Type, forall l : list X,
   rev (rev l) = l.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros X l.
+  induction l as [| h t].
+  - (* l = nil *)
+    simpl.
+    reflexivity.
+  - (* l = cons h t *)
+    simpl.
+    rewrite -> rev_app_distr.
+    rewrite -> IHt.
+    simpl.
+    reflexivity.
+Qed.
 (** [] *)
 
 (* ================================================================= *)
