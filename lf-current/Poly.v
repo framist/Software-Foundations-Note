@@ -499,6 +499,17 @@ Fixpoint combine {X Y : Type} (lx : list X) (ly : list Y)
 
         Compute (combine [1;2] [false;false;true;true]).
 *)
+
+Check @combine.
+(* @combine
+	 : forall X Y : Type, list X -> list Y -> list (X * Y) *)
+(* NOTE 再说一遍，要强制将隐式参数转为显式参数，我们可以在函数名前使用 @。 *)
+
+Compute (combine [1;2] [false;false;true;true]).
+(* 	 = [(1, false); (2, false)]
+     : list (nat * bool) *)
+
+
 (** [] *)
 
 (** **** 练习：2 星, standard, recommended (split) 
@@ -509,14 +520,26 @@ Fixpoint combine {X Y : Type} (lx : list X) (ly : list Y)
 
     请在下面完成 [split] 的定义，确保它能够通过给定的单元测试。 *)
 
+Definition append_list_pair {X Y : Type} 
+                            (lp1 : (list X) * (list Y)) 
+                            (lp2 : (list X) * (list Y)) : (list X) * (list Y) :=
+((fst lp1) ++ (fst lp2), (snd lp1) ++ (snd lp2)).
+
 Fixpoint split {X Y : Type} (l : list (X*Y))
-               : (list X) * (list Y)
-  (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
+               : (list X) * (list Y) :=
+  (* 将本行替换成 ":= _你的_定义_ ." *)
+  match l with
+  | [] => ([], [])
+  | (h1, h2) :: tail => append_list_pair ([h1], [h2]) (split tail)
+  end.
 
 Example test_split:
   split [(1,false);(2,false)] = ([1;2],[false;false]).
 Proof.
-(* 请在此处解答 *) Admitted.
+(* 请在此处解答 *)
+  simpl. reflexivity. Qed.
+
+
 (** [] *)
 
 (* ================================================================= *)
@@ -557,17 +580,25 @@ Proof. reflexivity. Qed.
 
     请完成上一章中 [hd_error] 的多态定义，确保它能通过下方的单元测试。 *)
 
-Definition hd_error {X : Type} (l : list X) : option X
-  (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
+Definition hd_error {X : Type} (l : list X) : option X :=
+  (* 将本行替换成 ":= _你的_定义_ ." *)
+  match l with
+  | [] => None
+  | h :: t => Some h 
+  end.
 
 (** 再说一遍，要强制将隐式参数转为显式参数，我们可以在函数名前使用 [@]。 *)
 
 Check @hd_error : forall X : Type, list X -> option X.
 
 Example test_hd_error1 : hd_error [1;2] = Some 1.
- (* 请在此处解答 *) Admitted.
+ (* 请在此处解答 *)
+Proof. simpl. reflexivity. Qed.
+
 Example test_hd_error2 : hd_error  [[1];[2]]  = Some [1].
- (* 请在此处解答 *) Admitted.
+ (* 请在此处解答 *)
+Proof. simpl. reflexivity. Qed.
+
 (** [] *)
 
 (* ################################################################# *)
@@ -669,16 +700,20 @@ Proof. reflexivity. Qed.
     使用 [filter]（而非 [Fixpoint]）来编写 Coq 函数 [filter_even_gt7]，
     它接受一个自然数列表作为输入，返回一个只包含大于 [7] 的偶数的列表。 *)
 
-Definition filter_even_gt7 (l : list nat) : list nat
-  (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
+Definition filter_even_gt7 (l : list nat) : list nat :=
+  (* 将本行替换成 ":= _你的_定义_ ." *) 
+  filter (fun n => (7 <? n) && (evenb n)) l.
 
 Example test_filter_even_gt7_1 :
   filter_even_gt7 [1;2;6;9;10;3;12;8] = [10;12;8].
- (* 请在此处解答 *) Admitted.
+ (* 请在此处解答 *) 
+Proof. reflexivity. Qed.
 
 Example test_filter_even_gt7_2 :
   filter_even_gt7 [5;2;6;19;129] = [].
- (* 请在此处解答 *) Admitted.
+ (* 请在此处解答 *)
+Proof. reflexivity. Qed.
+
 (** [] *)
 
 (** **** 练习：3 星, standard (partition) 
@@ -696,13 +731,16 @@ Example test_filter_even_gt7_2 :
 Definition partition {X : Type}
                      (test : X -> bool)
                      (l : list X)
-                   : list X * list X
-  (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
+                   : list X * list X :=
+  (* 将本行替换成 ":= _你的_定义_ ." *)
+  (filter test l , filter (fun x => negb (test x)) l).
 
 Example test_partition1: partition oddb [1;2;3;4;5] = ([1;3;5], [2;4]).
-(* 请在此处解答 *) Admitted.
+(* 请在此处解答 *)
+Proof. reflexivity. Qed.
 Example test_partition2: partition (fun x => false) [5;9;0] = ([], [5;9;0]).
-(* 请在此处解答 *) Admitted.
+(* 请在此处解答 *)
+Proof. reflexivity. Qed.
 (** [] *)
 
 (* ================================================================= *)
@@ -746,10 +784,23 @@ Proof. reflexivity. Qed.
 
     请证明 [map] 和 [rev] 可交换。你可能需要定义一个辅助引理 *)
 
+Lemma map_assoc分配率 : forall (X Y : Type) (f : X -> Y) (l1 l2 : list X),
+    map f (l1 ++ l2) = (map f l1) ++ (map f l2).
+Proof.
+  intros X Y f l1 l2.
+  induction l1.
+  - reflexivity.
+  - simpl. rewrite -> IHl1. reflexivity.
+Qed.
+
 Theorem map_rev : forall (X Y : Type) (f : X -> Y) (l : list X),
   map f (rev l) = rev (map f l).
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)  
+  intros X Y f l. induction l.
+  - simpl. reflexivity.
+  - simpl. rewrite <- IHl. rewrite -> map_assoc分配率. reflexivity. 
+Qed.
 (** [] *)
 
 (** **** 练习：2 星, standard, recommended (flat_map) 
@@ -765,12 +816,18 @@ Proof.
 
 Fixpoint flat_map {X Y: Type} (f: X -> list Y) (l: list X)
                    : (list Y)
-  (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
+  (* 将本行替换成 ":= _你的_定义_ ." *) :=
+  match l with
+  | [] => []
+  | h :: t => f h ++ flat_map f t
+end.
 
 Example test_flat_map1:
   flat_map (fun n => [n;n;n]) [1;5;4]
   = [1; 1; 1; 5; 5; 5; 4; 4; 4].
- (* 请在此处解答 *) Admitted.
+ (* 请在此处解答 *)
+Proof. simpl. reflexivity. Qed.
+
 (** [] *)
 
 (** [map] 这个函数不止对列表有意义，以下是一个在 [option] 上的 [map]：*)
@@ -789,6 +846,23 @@ Definition option_map {X Y : Type} (f : X -> Y) (xo : option X)
     Coq 检查你做的是否正确。（本练习并不会打分，你可以在本文件的_'副本'_中做它，
     之后丢掉即可。）
 *)
+Fixpoint filter_显式参数 (X:Type) (test: X->bool) (l:list X)
+                : (list X) :=
+  match l with
+  | []     => []
+  | h :: t => if test h then h :: (filter_显式参数 X test t)
+                        else       filter_显式参数 X test t
+  end.
+
+Fixpoint map_显式参数 (X Y: Type) (f:X->Y) (l:list X) : (list Y) :=
+  match l with
+  | []     => []
+  | h :: t => (f h) :: (map_显式参数 X Y f t)
+end.
+
+Check filter_显式参数.
+Check map_显式参数.
+
 (** [] *)
 
 (* ================================================================= *)
@@ -818,7 +892,12 @@ Fixpoint fold {X Y: Type} (f: X->Y->Y) (l: list X) (b: Y)
     以下是更多例子： *)
 
 Check (fold andb) : list bool -> bool -> bool.
-
+Compute (fold andb) [true; true] false.
+(* fold andb : list bool -> bool -> bool
+	 : list bool -> bool -> bool
+	 = false
+     : bool
+  这也说明了之前我猜测的柯里化是默认的 *)
 Example fold_example1 :
   fold mult [1;2;3;4] 1 = 24.
 Proof. reflexivity. Qed.
@@ -838,6 +917,9 @@ Proof. reflexivity. Qed.
     [Y] 不同时的应用情景吗？ *)
 
 (* 请在此处解答 *)
+(* 是否全是奇数函数 *)
+Compute fold (fun x y => (oddb x) && y ) [1;2;3;4] true.
+Compute fold (fun x y => (oddb x) && y ) [1;3;5;7] true.
 
 (* 请勿修改下面这一行： *)
 Definition manual_grade_for_fold_types_different : option (nat*string) := None.
