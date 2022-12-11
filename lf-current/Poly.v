@@ -991,7 +991,13 @@ Proof. reflexivity. Qed.
 Theorem fold_length_correct : forall X (l : list X),
   fold_length l = length l.
 Proof.
-(* 请在此处解答 *) Admitted.
+(* 请在此处解答 *)
+  intros X l. induction l.
+  - simpl. reflexivity.
+  - simpl. rewrite <- IHl. reflexivity.
+Qed.
+(* 确实很强大！似乎 [reflexivity] 具有解析函数的能力*)
+
 (** [] *)
 
 (** **** 练习：3 星, standard (fold_map) 
@@ -999,10 +1005,20 @@ Proof.
     我们也可以用 [fold] 来定义 [map]。请完成下面的 [fold_map]。 *)
 
 Definition fold_map {X Y: Type} (f: X -> Y) (l: list X) : list Y
-  (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
+  (* 将本行替换成 ":= _你的_定义_ ." *) :=
+  fold (fun x list_elem_y => f x :: list_elem_y) l [].
 
 (** 在 Coq 中写出 [fold_map_correct] 来陈述 [fold_map] 是正确的，然后证明它。
     （提示：再次提醒，[reflexivity] 的化简力度比 [simpl] 更强。） *)
+
+Theorem fold_map_correct: forall X Y ( f: X->Y ) ( l : list X),
+  fold_map f l = map f l.
+Proof.
+  intros X Y f l. induction l.
+  - simpl. reflexivity.
+  - simpl. rewrite <- IHl. reflexivity. 
+Qed.
+
 
 (* 请在此处解答 *)
 
@@ -1033,7 +1049,8 @@ Definition prod_curry {X Y Z : Type}
 
 Definition prod_uncurry {X Y Z : Type}
   (f : X -> Y -> Z) (p : X * Y) : Z
-  (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
+  (* 将本行替换成 ":= _你的_定义_ ." *) :=
+  f (fst p) (snd p).
 
 (** 举一个柯里化用途的（平凡的）例子，我们可以用它来缩短之前看到的一个例子： *)
 
@@ -1043,21 +1060,26 @@ Proof. reflexivity. Qed.
 (** 思考练习：在运行以下指令之前，你能计算出 [prod_curry] 和 [prod_uncurry] 
     的类型吗？ *)
 
-Check @prod_curry.
-Check @prod_uncurry.
+Check @prod_curry : forall X Y Z : Type, (X * Y -> Z) -> X -> Y -> Z.
+Check @prod_uncurry : forall X Y Z : Type, (X -> Y -> Z) -> X * Y -> Z.
 
 Theorem uncurry_curry : forall (X Y Z : Type)
                         (f : X -> Y -> Z)
                         x y,
   prod_curry (prod_uncurry f) x y = f x y.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  reflexivity. Qed.
 
 Theorem curry_uncurry : forall (X Y Z : Type)
                         (f : (X * Y) -> Z) (p : X * Y),
   prod_uncurry (prod_curry f) p = f p.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros X Y Z f p. destruct p.
+  - reflexivity. 
+Qed.
+
 (** [] *)
 
 (** **** 练习：2 星, advanced (nth_error_informal) 
@@ -1074,7 +1096,7 @@ Proof.
 
    forall X l n, length l = n -> @nth_error X l n = None
 *)
-(* 请在此处解答 *)
+(* TODO 请在此处解答 *)
 
 (* 请勿修改下面这一行： *)
 Definition manual_grade_for_informal_proof : option (nat*string) := None.
@@ -1117,16 +1139,17 @@ Definition three : cnat := @doit3times.
 (** 自然数的后继：给定一个邱奇数 [n]，它的后继 [succ n] 是一个把它的参数比 [n]
     还多迭代一次的函数。 *)
 Definition succ (n : cnat) : cnat
-  (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
+  (* 将本行替换成 ":= _你的_定义_ ." *) :=
+  fun X f x => n X f (f x).
 
 Example succ_1 : succ zero = one.
-Proof. (* 请在此处解答 *) Admitted.
+Proof. (* 请在此处解答 *) reflexivity. Qed.
 
 Example succ_2 : succ one = two.
-Proof. (* 请在此处解答 *) Admitted.
+Proof. (* 请在此处解答 *) reflexivity. Qed.
 
 Example succ_3 : succ two = three.
-Proof. (* 请在此处解答 *) Admitted.
+Proof. (* 请在此处解答 *) reflexivity. Qed.
 
 (** [] *)
 
