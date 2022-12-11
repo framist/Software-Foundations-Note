@@ -64,7 +64,10 @@ Theorem silly_ex :
      evenb 4 = true ->
      oddb 3 = true.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros eq1 eq2. apply eq2. Qed.
+  (* TODO 奇怪，这样子就成了？ *)
+
 (** [] *)
 
 (** 要使用 [apply] 策略，被应用的事实（的结论）必须精确地匹配证明目标：
@@ -88,11 +91,18 @@ Proof.
     （_'提示'_：你可以配合之前定义的引理来使用 [apply]，不仅限于当前上下文中的前提。
     记住 [Search] 是你的朋友。） *)
 
+(* Search list. *)
+
 Theorem rev_exercise1 : forall (l l' : list nat),
      l = rev l' ->
      l' = rev l.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros l l' H.
+  rewrite -> H.
+  symmetry.
+  apply rev_involutive.
+Qed.
 (** [] *)
 
 (** **** 练习：1 星, standard, optional (apply_rewrite) 
@@ -100,6 +110,26 @@ Proof.
     简述 [apply] 与 [rewrite] 策略之区别。哪些情况下二者均可有效利用？ *)
 
 (* 请在此处解答
+
+#ChatGPT#
+
+coq 中的 apply 和 rewrite 策略是两种不同的证明方法。
+
+apply 策略用于把一个公理（或定理）应用于当前目标，从而证明当前目标。
+例如，如果当前目标是 A，B，C 三个命题，并且我们已经证明了 A，B 两个命题，
+那么我们可以使用 apply 策略把 A，B 这两个命题应用于当前目标，从而证明当前目标。
+
+rewrite 策略用于重写当前目标中的等式。例如，如果当前目标是 A＝B，
+那么我们可以使用 rewrite 策略来重写当前目标，把它变成 B＝A。
+
+二者的区别在于，apply 策略用于应用一个公理或定理，从而证明当前目标，
+而 rewrite 策略用于重写当前目标中的等式，从而使得证明变得更容易。
+
+在某些情况下，apply 和 rewrite 策略都可以有效地利用。
+例如，如果当前目标是 A，B，C 三个命题，
+并且我们已经证明了 A，B，C 三个命题的一个组合（例如，A，B＝C），
+那么我们可以使用 apply 策略来应用这个组合，从而证明当前目标，
+也可以使用 rewrite 策略来重写当前目标中的等式，从而使得证明。
 
     [] *)
 
@@ -154,7 +184,10 @@ Example trans_eq_exercise : forall (n m o p : nat),
      (n + p) = m ->
      (n + p) = (minustwo o).
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros n m o p eq1 eq2.
+  apply trans_eq with (m).
+  apply eq2. apply eq1. Qed.
 (** [] *)
 
 (* ################################################################# *)
@@ -222,6 +255,8 @@ Proof.
   intros n m o H.
   (* 课上已完成 *)
   injection H as H1 H2.
+  (* H1: n = o
+     H2: m = o *)
   rewrite H1. rewrite H2. reflexivity.
 Qed.
 
@@ -234,7 +269,7 @@ Theorem injection_ex2 : forall (n m o : nat),
 Proof.
   intros n m o H.
   injection H.
-  (* 课上已完成 *)
+  (* m = o -> n = o -> [n] = [m] *)
   intros H1 H2. rewrite H1. rewrite H2. reflexivity.
 Qed.
 
@@ -244,22 +279,38 @@ Example injection_ex3 : forall (X : Type) (x y z : X) (l j : list X),
   j = z :: l ->
   x = y.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *) 
+  intros X x y z l j H1 H2.
+  injection H1 as h1 h2.
+  rewrite h1. Admitted.
+
+(* TODO *)
+
 (** [] *)
 
 (** So much for injectivity of constructors.  What about disjointness?
+    这就是构造器的injectivity（注射性？）。那 disjointness （不交性？）呢？
 
     The principle of disjointness says that two terms beginning with
     different constructors (like [O] and [S], or [true] and [false])
     can never be equal.  This means that, any time we find ourselves
     in a context where we've _assumed_ that two such terms are equal,
     we are justified in concluding anything we want, since the
-    assumption is nonsensical. *)
+    assumption is nonsensical. 
+    不交性的原则认为两个以不同构造器开头的项（比如 [O] 和 [S]，或 [true] 和 [false]）
+    永远不会相等。这意味着，在某个上下文中，如果我们假设这两个项相等，
+    我们就有理由得出任何我们想要的结论，因为这个假设是毫无意义的。
+    
+    *)
 
 (** The [discriminate] tactic embodies this principle: It is used on a
     hypothesis involving an equality between different
     constructors (e.g., [S n = O]), and it solves the current goal
-    immediately.  Here is an example: *)
+    immediately.  Here is an example: 
+    [discriminate] 策略体现了这个原则：
+    它用于处理涉及不同构造器的等式的假设（例如 [S n = O]），它立即解决当前目标。
+    这里有一个例子：
+    *)
 
 Theorem eqb_0_l : forall n,
    0 =? n = true -> n = 0.
@@ -272,9 +323,12 @@ Proof.
   - (* n = 0 *)
     intros H. reflexivity.
 
-(** However, the second one doesn't look so simple: assuming [0
-    =? (S n') = true], we must show [S n' = 0]!  The way forward is to
-    observe that the assumption itself is nonsensical: *)
+(** However, the second one doesn't look so simple: 
+    然而，第二个看起来并不那么简单：
+    assuming [0 =? (S n') = true], we must show [S n' = 0]!  
+    The way forward is to observe that the assumption itself 
+    is nonsensical: 
+    前进的方法是观察这个假设本身是毫无意义的： *)
 
   - (* n = S n' *)
     simpl.
@@ -312,7 +366,9 @@ Example discriminate_ex3 :
     x :: y :: l = [] ->
     x = z.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *) 
+  intros X x y z l j H1.
+  discriminate H1. Qed.
 (** [] *)
 
 
@@ -334,7 +390,12 @@ Proof. intros n m H. apply f_equal. apply H. Qed.
     the tactic [f_equal] will produce subgoals of the form [f = g],
     [a1 = b1], ..., [an = bn]. At the same time, any of these subgoals
     that are simple enough (e.g., immediately provable by
-    [reflexivity]) will be automatically discharged by [f_equal]. *)
+    [reflexivity]) will be automatically discharged by [f_equal]. 
+    还有一个名为 `f_equal` 的策略，可以证明这样的定理。
+    给定形如 [f a1 ... an = g b1 ... bn] 的目标，
+    [f_equal] 策略会产生形如 [f = g]、[a1 = b1]、...、[an = bn] 的子目标。
+    同时，[f_equal] 会自动解决任何足够简单（例如可以立即通过 [reflexivity] 证明）的子目标。
+    *)
 
 Theorem eq_implies_succ_equal' : forall (n m : nat),
     n = m -> S n = S m.
@@ -402,6 +463,13 @@ Proof.
        intros n m. induction n.
 
     开始，就会卡在归纳情况中... *)
+
+Theorem double_injective_尝试 : forall n m,
+     double n = double m ->
+     n = m.
+Proof.
+  intros n. induction n.
+  - simpl. Abort.  
 
 Theorem double_injective_FAILED : forall n m,
      double n = double m ->
@@ -514,7 +582,12 @@ Proof.
     careful, when using induction, that we are not trying to prove
     something too specific: When proving a property involving two
     variables [n] and [m] by induction on [n], it is sometimes
-    crucial to leave [m] generic. *)
+    crucial to leave [m] generic. 
+    从这一切中，你应该得到的结论是，在使用归纳证明时，
+    我们需要注意不要尝试证明太具体的东西：
+    当用归纳证明涉及两个变量 n 和 m 的性质时，
+    有时仅把 m 留作一个通用变量是非常关键的。
+    *)
 
 (** 以下练习遵循同样的模式。 *)
 
@@ -651,7 +724,9 @@ Proof.
 
 (** It sometimes happens that we need to manually unfold a name that
     has been introduced by a [Definition] so that we can manipulate
-    the expression it denotes.  For example, if we define... *)
+    the expression it denotes.  For example, if we define... 
+    有时候我们需要手动展开一个由 Definition 定义引入的名称，
+    以便我们可以操作它所表示的表达式。例如，如果我们定义... *)
 
 Definition square n := n * n.
 
@@ -819,7 +894,9 @@ Definition sillyfun1 (n : nat) : bool :=
 
 (** Now suppose that we want to convince Coq that [sillyfun1 n]
     yields [true] only when [n] is odd.  If we start the proof like
-    this (with no [eqn:] on the [destruct])... *)
+    this (with no [eqn:] on the [destruct])... 
+    现在假设我们想要说服 Coq，sillyfun1 n 只有在 n 为奇数时才产生 true。
+    如果我们以这样的方式开始证明（没有 eqn: 在 destruct 上）...*)
 
 Theorem sillyfun1_odd_FAILED : forall (n : nat),
      sillyfun1 n = true ->
@@ -838,11 +915,19 @@ Abort.
     destructed, because we need to be able to reason that, since [n =?
     3 = true] in this branch of the case analysis, it must be that [n
     = 3], from which it follows that [n] is odd.
+    ... 那么我们会在这个点上卡住，因为上下文中没有足够的信息来证明目标！
+    问题在于 destruct 执行的替换非常残酷 - 在这种情况下，
+    它丢弃了每一个 n =? 3 的出现，但我们需要保留一些对这个表达式的记忆，
+    以及它是如何被 destruct 的，因为我们需要能够推理出，由于在案例分析的这个分支中
+    n =? 3 = true，所以必须有 n = 3，从而得出 n 是奇数。
 
     What we want here is to substitute away all existing occurences of
     [n =? 3], but at the same time add an equation to the context that
     records which case we are in.  This is precisely what the [eqn:]
-    qualifier does. *)
+    qualifier does. 
+    我们在这里想要做的是替换掉所有现有的 n =? 3 的出现，但同时在上下文中添加一个方程式，
+    记录我们所处的情况。这恰恰是 eqn: 限定符所做的。
+    *)
 
 Theorem sillyfun1_odd : forall (n : nat),
      sillyfun1 n = true ->
