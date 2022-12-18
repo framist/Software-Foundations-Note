@@ -6,7 +6,7 @@ My note & solutions to the Software Foundations Book
 
 贡献：
 
-- 完成题解
+- 完成部分题解
 - 笔记 （在 `./软件基础 课程笔记/`）
 - 其他  
   - 修正部分的翻译瑕疵，增加部分翻译 *一点无效的工作*

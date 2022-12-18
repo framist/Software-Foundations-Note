@@ -700,6 +700,10 @@ Proof.
 (** 在结束本节之前，我们先稍微跑个题，使用 [eqb_true]
     来证明一个标识符的类似性质以备后用： *)
 
+Search eqb_id. 
+(* eqb_id x y = false ->
+PartialMap.find x (PartialMap.update d y o) = PartialMap.find x d *)
+
 Theorem eqb_id_true : forall x y,
   eqb_id x y = true -> x = y.
 Proof.
