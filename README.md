@@ -10,7 +10,7 @@ My note & solutions to the Software Foundations Book
 - 笔记 （在 `./软件基础 课程笔记/`）
 - 其他  
   - 修正部分的翻译瑕疵，增加部分翻译 *一点无效的工作*
-  - 清理仓库 *修剪了`.git/`文件的大小*
+  - 清理仓库 *修剪了`.git/`文件的大小 使用 `git filter-repo`* 
 
 ---
 
