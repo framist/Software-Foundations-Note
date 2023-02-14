@@ -1,4 +1,5 @@
 {
     "commentTranslate.multiLineMerge": true,
-    "commentTranslate.hover.enabled": false
+    "commentTranslate.hover.enabled": false,
+    "commentTranslate.source": "intellsmi.comment-translate-ali.cloud"
 }
