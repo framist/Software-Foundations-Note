@@ -375,6 +375,7 @@ Proof.
   intros P HP' Q HP. destruct HP'.
   apply HP.
 Qed.
+
 (** [] *)
 
 (** 不等性是十分常见的否定句的例子，，它有一个特别的记法 [x <> y]：
@@ -411,6 +412,7 @@ Theorem not_False :
 Proof.
   unfold not. intros H. destruct H. Qed.
 
+  (* 矛盾率 *)
 Theorem contradiction_implies_anything : forall P Q : Prop,
   (P /\ ~P) -> Q.
 Proof.
@@ -418,6 +420,7 @@ Proof.
   intros P Q [HP HNA]. unfold not in HNA.
   apply HNA in HP. destruct HP.  Qed.
 
+  (* 双重否定率 *)
 Theorem double_neg : forall P : Prop,
   P -> ~~P.
 Proof.
@@ -434,6 +437,8 @@ Proof.
 
 (* 请勿修改下面这一行： *)
 Definition manual_grade_for_double_neg_inf : option (nat*string) := None.
+(* TODO *)
+
 (** [] *)
 
 (** **** 练习：2 星, standard, recommended (contrapositive)  *)
@@ -551,12 +556,21 @@ Qed.
 Theorem iff_refl : forall P : Prop,
   P <-> P.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros P.
+  split.
+  - intros P'. apply P'. 
+  - intros P'. apply P'.
+Qed.
 
 Theorem iff_trans : forall P Q R : Prop,
   (P <-> Q) -> (Q <-> R) -> (P <-> R).
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros P Q R [HPQ HQP] [HQR HRQ]. split.
+  - intros P'. apply HPQ in P'. apply HQR in P'. apply P'.
+  - intros R'. apply HRQ in R'. apply HQP in R'. apply R'.
+Qed.
 (** [] *)
 
 (** **** 练习：3 星, standard (or_distributes_over_and)  *)
@@ -669,7 +683,11 @@ Proof.
 Theorem dist_not_exists : forall (X:Type) (P : X -> Prop),
   (forall x, P x) -> ~ (exists x, ~ P x).
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *) 
+  intros X P Hall Hexist.
+  destruct Hexist as [x HPnot].
+  unfold not in HPnot. apply HPnot. apply Hall.
+Qed.
 (** [] *)
 
 (** **** 练习：2 星, standard (dist_exists_or) 
@@ -679,7 +697,15 @@ Proof.
 Theorem dist_exists_or : forall (X:Type) (P Q : X -> Prop),
   (exists x, P x \/ Q x) <-> (exists x, P x) \/ (exists x, Q x).
 Proof.
-   (* 请在此处解答 *) Admitted.
+   (* 请在此处解答 *)
+  intros X P Q. split.
+  - (* -> *) intros H. destruct H as [X' H]. destruct H as [HP | HQ].
+    + left. exists X'. apply HP.
+    + right. exists X'. apply HQ.      
+  - (* <- *) intros H. destruct H as [HP | HQ].
+    + destruct HP as [X' HP]. exists X'. left. apply HP.
+    + destruct HQ as [X' HQ]. exists X'. right. apply HQ. 
+Qed.
 (** [] *)
 
 (* ################################################################# *)
