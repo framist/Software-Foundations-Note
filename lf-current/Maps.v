@@ -110,6 +110,7 @@ Proof.
     它在某个映射中查找不存在的键时会返回默认值。 *)
 
 Definition total_map (A : Type) := string -> A.
+(* *定义 total_map 类型* *)
 
 (** 直观上来说，一个元素类型为 [A] 的全映射不过就是个根据 [string]
     来查找 [A] 的函数。 *)
@@ -186,7 +187,8 @@ Proof. reflexivity. Qed.
 Lemma t_apply_empty : forall (A : Type) (x : string) (v : A),
     (_ !-> v) x = v.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *) 
+  reflexivity. Qed.
 (** [] *)
 
 (** **** 练习：2 星, standard, optional (t_update_eq) 
@@ -198,7 +200,9 @@ Proof.
 Lemma t_update_eq : forall (A : Type) (m : total_map A) x v,
     (x !-> v ; m) x = v.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros A m x v. unfold t_update.
+  rewrite <- eqb_string_refl. reflexivity. Qed.
 (** [] *)
 
 (** **** 练习：2 星, standard, optional (t_update_neq) 
@@ -211,7 +215,10 @@ Theorem t_update_neq : forall (A : Type) (m : total_map A) x1 x2 v,
     x1 <> x2 ->
     (x1 !-> v ; m) x2 = m x2.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros X v x1 x2 m H. unfold t_update.
+  apply false_eqb_string in H. rewrite H.
+  reflexivity. Qed.
 (** [] *)
 
 (** **** 练习：2 星, standard, optional (t_update_shadow) 
