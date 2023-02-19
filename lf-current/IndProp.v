@@ -2,7 +2,8 @@
 
 Set Warnings "-notation-overridden,-parsing".
 From LF Require Export Logic.
-Require Coq.omega.Omega.
+(* Require Coq.omega.Omega. *)
+Require Coq.omega.OmegaLemmas. 
 
 (* ################################################################# *)
 (** * 归纳定义的命题 *)
@@ -130,7 +131,11 @@ Qed.
 Theorem ev_double : forall n,
   ev (double n).
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *)
+  intros n. rewrite double_plus. induction n.
+  - simpl.  apply ev_0.
+  - simpl. rewrite <- plus_n_Sm. apply ev_SS. apply IHn.
+Qed.
 (** [] *)
 
 (* ################################################################# *)
@@ -166,6 +171,12 @@ Proof.
     a tool, we can prove our characterization of evidence for
     [ev n], using [destruct]. *)
 
+(*  假设我们正在证明涉及数字 [n] 的事实，并且给出了 [ev n] 作为假设。
+    我们已经知道如何使用 [destruct] 或 [induction] 来对 [n] 进行情况分析，
+    为[n = O]的情况和一些[n']的情况 [n = S n'] 生成单独的子目标。
+    但是，对于某些证明，我们可能会_直接_考虑 [ev n] 的证据。
+    作为一种工具，我们可以使用 [destruct] 来证明 [ev n] 的特征。*)
+
 Theorem ev_inversion :
   forall (n : nat), ev n ->
     (n = 0) \/ (exists n', n = S (S n') /\ ev n').
@@ -190,7 +201,8 @@ Proof.
 Qed.
 
 (** However, this variation cannot easily be handled with just
-    [destruct]. *)
+    [destruct]. 
+    但是，这种变化不能仅仅通过 destruct 来处理。*)
 
 Theorem evSS_ev : forall n,
   ev (S (S n)) -> even n.
@@ -211,7 +223,9 @@ Abort.
     然而，这对于 [evSS_ev] 并没有帮助，因为被替换掉的 [S (S n)] 并没有在其他地方被使用。*)
 
 (** If we [remember] that term [S (S n)], the proof goes
-    through.  (We'll discuss [remember] in more detail below.) *)
+    through.  (We'll discuss [remember] in more detail below.) 
+    如果我们 [remember] 这个术语 [S (S n)]，证明就会通过。 
+    (我们将在下面更详细地讨论 [remember] ）。*)
 
 Theorem evSS_ev_remember : forall n,
   ev (S (S n)) -> ev n.
@@ -220,7 +234,10 @@ Proof.
   - (* E = ev_0 *)
     (* Now we do have an assumption, in which [k = S (S n)] has been
        rewritten as [0 = S (S n)] by [destruct]. That assumption
-       gives us a contradiction. *)
+       gives us a contradiction. 
+       现在我们确实有一个假设，其中 [k = S (sn)] 已经
+       被 [destruct] 改写为 [0 = S (sn)]。那个假设给我们一个矛盾。
+       *)
     discriminate Heqk.
   - (* E = ev_S n' E' *)
     (* This time [k = S (S n)] has been rewritten as [S (S n') = S (S n)]. *)
@@ -228,7 +245,8 @@ Proof.
 Qed.
 
 (** Alternatively, the proof is straightforward using our inversion
-    lemma. *)
+    lemma. 
+    或者，使用我们的反演引理，证明是直截了当的。 *)
 
 Theorem evSS_ev : forall n, ev (S (S n)) -> ev n.
 Proof. intros n H. apply ev_inversion in H. destruct H.
@@ -243,12 +261,24 @@ Qed.
     subgoal makes use of [injection] and [rewrite].  Coq provides a
     handy tactic called [inversion] that factors out that common
     pattern.
+    请注意两个证明如何产生两个子目标，它们对应
+    证明 [ev] 的两种方式。第一个子目标是
+    与 [discriminate]。第二个
+    子目标利用 [injection] and [rewrite]。Coq提供了一个
+    方便的策略称为 [inversion]，它排除了常见的因素
+    模式。
 
     The [inversion] tactic can detect (1) that the first case ([n =
     0]) does not apply and (2) that the [n'] that appears in the
     [ev_SS] case must be the same as [n].  It has an "[as]" variant
     similar to [destruct], allowing us to assign names rather than
-    have Coq choose them. *)
+    have Coq choose them.
+    [inversion] 策略可以检测到 (1) 第一种情况 ([n =
+    0]) 不适用，并且 (2) 出现在
+    [ev_SS] 情况必须与 [n] 相同。它有一个 “[as]” 变体
+    类似于 [destruct]，允许我们分配名称而不是
+    让 Coq 选择它们。
+    *)
 
 Theorem evSS_ev' : forall n,
   ev (S (S n)) -> ev n.
@@ -262,7 +292,11 @@ Qed.
 (** The [inversion] tactic can apply the principle of explosion to
     "obviously contradictory" hypotheses involving inductively defined
     properties, something that takes a bit more work using our
-    inversion lemma. For example: *)
+    inversion lemma. For example: 
+    [inversion] 策略可以将爆炸原理应用于
+    涉及归纳定义的 “明显矛盾” 假设
+    属性，使用我们的
+    反演引理。例如: *)
 
 Theorem one_not_even : ~ ev 1.
 Proof.
@@ -305,7 +339,17 @@ Proof.
     [Tactics].  (Here we are being a bit lazy by omitting the [as]
     clause from [inversion], thereby asking Coq to choose names for
     the variables and hypotheses that it introduces.) *)
-
+(** [inversion] 策略做了很多工作。对于
+    例如，当应用于相等假设时，它会完成工作
+    [discriminate] and [injection]。此外，它还携带
+    列出通常需要的 [intros] and [rewrite]
+    [注射] 的情况。它也可以应用，更一般地说，
+    分析归纳定义命题的证据。作为
+    例如，我们将用它来证明本章中的一些定理
+    [Tactics]。(在这里，我们忽略了 [as]
+    子句来自 [inversion]，从而要求Coq为
+    它引入的变量和假设。) *)
+    
 Theorem inversion_ex1 : forall (n m o : nat),
   [n; m] = [o; o] ->
   [n] = [m].

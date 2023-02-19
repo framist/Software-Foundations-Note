@@ -103,13 +103,13 @@ Qed.
 
 Theorem ev_4'' : ev 4.
 Proof.
-  Show Proof.
+  Show Proof.   (* ?Goal *)
   apply ev_SS.
-  Show Proof.
+  Show Proof.   (* (ev_SS 2 ?Goal) *)
   apply ev_SS.
-  Show Proof.
+  Show Proof.   (* (ev_SS 2 (ev_SS 0 ?Goal)) *)
   apply ev_0.
-  Show Proof.
+  Show Proof.   (* (ev_SS 2 (ev_SS 0 ev_0)) *)
 Qed.
 
 (** 在任意的给定时刻，Coq已经构造了一个包含一个“洞(hole)”（即
@@ -124,6 +124,10 @@ Qed.
 
 Definition ev_4''' : ev 4 :=
   ev_SS 2 (ev_SS 0 ev_0).
+(* 如果给出的定义（证明）有误，报错是类型不匹配。 例如：
+Error: The term "ev_SS 2 (ev_SS 0 ev_0)" has type "ev 4"
+while it is expected to have type "ev 8".
+*)
 
 (** 所有这些构造证明的不同方式，对应的存储在全局环境中的证明是完全一样的。 *)
 
@@ -142,10 +146,17 @@ Print ev_4'''.
 
 Theorem ev_8 : ev 8.
 Proof.
-  (* 请在此处解答 *) Admitted.
+  (* 请在此处解答 *) 
+  apply ev_SS.
+  apply ev_SS.
+  apply ev_SS.
+  apply ev_SS.
+  apply ev_0.
+Qed.
 
 Definition ev_8' : ev 8
-  (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
+  (* 将本行替换成 ":= _你的_定义_ ." *) 
+  := ev_SS 6 (ev_SS 4 (ev_SS 2 (ev_SS 0 ev_0))).
 (** [] *)
 
 (* ################################################################# *)
@@ -239,9 +250,9 @@ Definition ev_plus2'' : Prop :=
 
 Definition add1 : nat -> nat.
 intro n.
-Show Proof.
+Show Proof.   (* (fun n : nat => ?Goal) *)
 apply S.
-Show Proof.
+Show Proof.   (* (fun n : nat => S ?Goal) *)
 apply n. Defined.
 
 Print add1.
@@ -312,7 +323,7 @@ Proof.
     + apply HQ.
 Qed.
 
-(** 这解释了为什么一直以来我们能够使用策略来操作[and]的归纳定义。我们
+(** 这解释了为什么一直以来我们能够使用策略来操作 [and] 的归纳定义。我们
     也可以使用模式匹配来用它直接构造证明。例如： *)
 
 Definition and_comm'_aux P Q (H : P /\ Q) : Q /\ P :=
