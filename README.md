@@ -9,8 +9,8 @@ My note & solutions to the Software Foundations Book
 - 完成部分题解
 - 笔记 （在 `./软件基础 课程笔记/`）
 - 其他  
-  - 修正部分的翻译瑕疵，增加部分翻译 *一点无效的工作*
-  - 清理仓库 *修剪了`.git/`文件的大小 使用 `git filter-repo`* 
+  - 修正部分的翻译瑕疵，增加部分翻译[^2]
+  - 清理仓库[^3]
 
 ---
 
@@ -37,6 +37,7 @@ Chinese translation of _[Software Foundations](https://softwarefoundations.cis.u
 
 [**Please do not post solutions to the exercises in a public place.**](https://softwarefoundations.cis.upenn.edu/lf-current/Preface.html#lab10)
 
----
-[^1]: 所以你应该对本仓库中的所有题解视而不见！
 
+[^1]: 所以你应该对本仓库中的所有题解视而不见！
+[^2]: 只是一点无效的工作，不会被提交到翻译团队。
+[^3]: 修剪了`.git/`文件的大小 使用 `git filter-repo`
