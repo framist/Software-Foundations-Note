@@ -333,14 +333,21 @@ Definition and_comm'_aux P Q (H : P /\ Q) : Q /\ P :=
 
 Definition and_comm' P Q : P /\ Q <-> Q /\ P :=
   conj (and_comm'_aux P Q) (and_comm'_aux Q P).
+(* <-> 是 <- 与 -> 的合取  *)
 
 (** **** 练习：2 星, standard, optional (conj_fact) 
 
     构造一个证明对象来证明下列命题。 *)
 
 Definition conj_fact : forall P Q R, P /\ Q -> Q /\ R -> P /\ R
-  (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
-(** [] *)
+  (* 将本行替换成 ":= _你的_定义_ ." *) :=
+  fun (P Q R : Prop) (HPQ : P /\ Q) (HQR : Q /\ R) => 
+  match HPQ, HQR with 
+  | conj HP HQ , conj HQ2 HR => conj HP HR
+  end.
+(* TODO 有待理解，为什么就直接产生证实了 *)
+
+  (** [] *)
 
 (* ================================================================= *)
 (** ** 析取 *)
@@ -364,15 +371,50 @@ End Or.
 
     尝试写下[or_commut]的显式证明对象。（不要使用[Print]来偷看我们已经
     定义的版本！） *)
+(* 我就偷看 ;-) *)
+Print or_comm.
+(* or_comm = 
+fun A B : Prop =>
+conj
+  (fun H : A \/ B =>
+   match H with
+   | or_introl x => (fun H0 : A => or_intror H0) x
+   | or_intror x => (fun H0 : B => or_introl H0) x
+   end)
+  (fun H : B \/ A =>
+   match H with
+   | or_introl x => (fun H0 : B => or_intror H0) x
+   | or_intror x => (fun H0 : A => or_introl H0) x
+   end)
+	 : forall A B : Prop, A \/ B <-> B \/ A
 
+Arguments or_comm (A B)%type_scope
+ *)
+Print or_commut.
+(* or_commut = 
+fun (P Q : Prop) (H : P \/ Q) =>
+match H with
+| or_introl x => (fun HP : P => or_intror HP) x
+| or_intror x => (fun HQ : Q => or_introl HQ) x
+end
+	 : forall P Q : Prop, P \/ Q -> Q \/ P
+
+Arguments or_commut (P Q)%type_scope _
+ *)
 Definition or_comm : forall P Q, P \/ Q -> Q \/ P
-  (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
+  (* 将本行替换成 ":= _你的_定义_ ." *)  :=
+  fun (P Q : Prop) (pq: P \/ Q) =>
+  match pq with
+    | or_introl p => or_intror Q p
+    | or_intror q => or_introl P q
+  end.
+
 (** [] *)
 
 (* ================================================================= *)
 (** ** 存在量化 *)
 
-(** 为了给出存在量词的证据，我们将一个证据类型[x]和[x]满足性质[P]的证明打包在一起： *)
+(** 为了给出存在量词的证据，我们将一个证据类型 [x] 和 [x] 满足性质 [P] 的证明打包在一起： *)
 
 Module Ex.
 
@@ -384,7 +426,7 @@ End Ex.
 (** 打包之后的命题可以通过解包操作受益。这里的核心定义是为了用于构造
     [ex P]命题的类型构造器[ex]，其中[P]自身是一个从类型为[A]的证据类型
     值到命题的_'函数(Function)'_。构造子[ex_intro]提供了一个给定
-    证据类型[x]和[P x]的证 明，可以构造[ex P]的证据的方式。 *)
+    证据类型[x]和[P x]的证明，可以构造[ex P]的证据的方式。 *)
 
 (** 我们更加熟悉的类型[exists x, P x]可以转换为一个涉及[ex]的表达式： *)
 
@@ -401,12 +443,14 @@ Definition some_nat_is_even : exists n, ev n :=
 
 Definition ex_ev_Sn : ex (fun n => ev (S n))
   (* 将本行替换成 ":= _你的_定义_ ." *). Admitted.
+(* TODO 有待理解 *)
+
 (** [] *)
 
 (* ================================================================= *)
-(** ** [True]和[False] *)
+(** ** [True] 和 [False] *)
 
-(** [True]命题的归纳定义很简单： *)
+(** [True] 命题的归纳定义很简单： *)
 
 Inductive True : Prop :=
   | I : True.
@@ -460,6 +504,15 @@ Lemma four: 2 + 2 == 1 + 3.
 Proof.
   apply eq_refl.
 Qed.
+
+(* TODO `=` 与 `==` 的关系？
+实测 `reflexivity` 只能证明 `=` *)
+Lemma four_': 2 + 2 = 1 + 3.
+Proof. reflexivity. Qed.
+
+Lemma four_f: 2 + 2 == 1 + 3.
+Proof.
+  Fail reflexivity. Admitted.
 
 (** 至今为止我们所用来证据相等关系的[reflexivity]策略本质上只是[apply
     eq_refl]的简写。
