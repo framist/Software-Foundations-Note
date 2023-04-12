@@ -738,7 +738,7 @@ Proof.
 Qed.
 
 (* ################################################################# *)
-(** * The Coq Trusted Computing Base *)
+(** * Coq 可信计算基 The Coq Trusted Computing Base *)
 
 (** One issue that arises with any automated proof assistant is "why
     trust it?": what if there is a bug in the implementation that
@@ -759,16 +759,33 @@ Qed.
     patterns belonging to the inductive type being matched over and
     all arms of the [match] return the same type, and so on.
 
-    There are a few additional wrinkles:
+    任何自动化证明助手都会遇到一个问题，即“为什么要信任它？”：
+    如果实现中存在错误导致其所有推理都成为可疑的，该怎么办？
+
+    虽然无法完全消除这些担忧，
+    但 Coq 基于 Curry-Howard 对应关系的事实使其具有坚实的基础。
+    因为命题只是类型，证明只是项，检查所声称的命题的证明是否有效只是对术语进行类型检查。
+    类型检查器是相对较小和直接的程序，因此 Coq 的“可信计算基”——
+    我们必须相信其正确运行的代码部分也很小。
+
+    类型检查器必须做什么？其主要工作是确保在每个函数应用中，预期的实际参数类型匹配，
+    匹配表达式的分支是归纳类型的构造器模式，并且匹配的所有分支返回相同的类型等等。
+
+    There are a few additional wrinkles: 有一些额外的细节：
 
     - Since Coq types can themselves be expressions, the checker must
       normalize these (by using the computation rules) before
       comparing them.
+      由于 Coq 类型本身也可以是表达式，
+      因此在比较它们之前，检查器必须将它们规范化（使用计算规则）。
 
     - The checker must make sure that [match] expressions are
       _exhaustive_.  That is, there must be an arm for every possible
       constructor.  To see why, consider the following alleged proof
       object:
+      检查器必须确保 [match] 是*全面的*。
+      也就是说，对于每个可能的构造函数，都必须有一个分支。
+      要了解原因，请考虑以下所谓的证明对象：
 
       Definition or_bogus : forall P Q, P \/ Q -> P :=
         fun (P Q : Prop) (A : P \/ Q) =>
@@ -779,18 +796,24 @@ Qed.
       All the types here match correctly, but the [match] only
       considers one of the possible constructors for [or].  Coq's
       exhaustiveness check will reject this definition.
+      这里所有的类型都匹配正确，但是 [match] 只考虑了 [or] 的可能构造函数之一。
+      Coq 的全面性检查将拒绝此定义。
 
     - The checker must make sure that each [fix] expression
       terminates.  It does this using a syntactic check to make sure
       that each recursive call is on a subexpression of the original
       argument.  To see why this is essential, consider this alleged
-      proof:
+      proof: 
+      检查器必须确保每个 [fix] 表达式都终止。
+      它使用语法检查来执行此操作，以确保每个递归调用都在原始参数的子表达式上。
+      要了解为什么这很重要，请考虑以下所谓的证明：
 
           Definition nat_false : forall (n:nat), False :=
              fix f (n:nat) : False := f n.
 
       Again, this is perfectly well-typed, but (fortunately) Coq will
-      reject it. *)
+      reject it.
+      同样，这也是完全符合类型的，但是（幸运的是）Coq 将拒绝它 *)
 
 (** Note that the soundness of Coq depends only on the correctness of
     this typechecking engine, not on the tactic machinery.  If there
@@ -798,6 +821,10 @@ Qed.
     happen!), that tactic might construct an invalid proof term.  But
     when you type [Qed], Coq checks the term for validity from
     scratch.  Only lemmas whose proofs pass the type-checker can be
-    used in further proof developments.  *)
+    used in further proof developments. 
+    请注意，Coq 的健全性仅取决于此类型检查引擎的正确性，而不取决于策略机制。
+    如果策略实现中存在错误（这确实会发生！），那么该策略可能会构造出一个无效的证明项。
+    但是当您键入Qed时，Coq会从头开始检查该术语的有效性。
+    只有通过类型检查器的证明才能在进一步的证明开发中使用。 *)
 
 (* 2022-03-14 05:26:58 (UTC+00) *)
