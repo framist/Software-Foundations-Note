@@ -45,7 +45,7 @@ HASNATDYNLINK     := $(COQMF_HASNATDYNLINK)
 OCAMLWARN         := $(COQMF_WARN)
 
 Makefile.conf: _CoqProject
-	/snap/coq-prover/31/coq-platform/bin/coq_makefile COQBIN = /snap/coq-prover/31/coq-platform/bin/ -f _CoqProject AltAutoTest.v AltAuto.v AutoTest.v Auto.v BasicsTest.v Basics.v BibTest.v Bib.v ExtractionTest.v Extraction.v ImpCEvalFunTest.v ImpCEvalFun.v ImpParserTest.v ImpParser.v ImpTest.v Imp.v IndPrinciplesTest.v IndPrinciples.v IndPropTest.v IndProp.v InductionTest.v Induction.v ListsTest.v Lists.v LogicTest.v Logic.v MapsTest.v Maps.v PolyTest.v Poly.v PostscriptTest.v Postscript.v PrefaceTest.v Preface.v ProofObjectsTest.v ProofObjects.v RelTest.v Rel.v TacticsTest.v Tactics.v -o Makefile
+	coq_makefile -f _CoqProject AltAutoTest.v AltAuto.v AutoTest.v Auto.v BasicsTest.v Basics.v BibTest.v Bib.v ExtractionTest.v Extraction.v ImpCEvalFunTest.v ImpCEvalFun.v ImpParserTest.v ImpParser.v ImpTest.v Imp.v IndPrinciplesTest.v IndPrinciples.v IndPropTest.v IndProp.v InductionTest.v Induction.v ListsTest.v Lists.v LogicTest.v Logic.v MapsTest.v Maps.v PolyTest.v Poly.v PostscriptTest.v Postscript.v PrefaceTest.v Preface.v ProofObjectsTest.v ProofObjects.v RelTest.v Rel.v TacticsTest.v Tactics.v -o Makefile
 
 # This file can be created by the user to hook into double colon rules or
 # add any other Makefile code he may need
