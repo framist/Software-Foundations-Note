@@ -23,7 +23,8 @@ From Coq Require Import Bool.Bool.
 From Coq Require Import Init.Nat.
 From Coq Require Import Arith.Arith.
 From Coq Require Import Arith.EqNat.
-From Coq Require Import omega.Omega.
+(* From Coq Require Import omega.Omega. *)
+From Coq Require Import Lia. (* 用于替代 omega。 见行 425 *)
 From Coq Require Import Lists.List.
 From Coq Require Import Strings.String.
 Import ListNotations.
@@ -441,12 +442,55 @@ Tactic Notation "simpl_and_try" tactic(c) :=
     那么调用 [omega] 要么会解决该证明目标，要么就会失败，这意味着该目标为假
     （目标_'不满足'_此形式也会失败。） *)
 
+(* Example silly_presburger_example : forall m n o p,
+  m + n <= n + o /\ o + 3 = p + 3 ->
+  m <= p.
+Proof.
+  intros.
+Qed. 
+
+omega 已不能使用，参照英文课本：https://softwarefoundations.cis.upenn.edu/lf-current/Imp.html
+*)
+
+(* ================================================================= *)
+(** ** The [lia] Tactic *)
+
+(** The [lia] tactic implements a decision procedure for a subset of
+    first-order logic called _Presburger arithmetic_.
+
+    If the goal is a universally quantified formula made out of
+
+      - numeric constants, addition ([+] and [S]), subtraction ([-]
+        and [pred]), and multiplication by constants (this is what
+        makes it Presburger arithmetic),
+
+      - equality ([=] and [<>]) and ordering ([<=] and [>]), and
+
+      - the logical connectives [/\], [\/], [~], and [->],
+
+    then invoking [lia] will either solve the goal or fail, meaning
+    that the goal is actually false.  (If the goal is _not_ of this
+    form, [lia] will fail.) *)
+
 Example silly_presburger_example : forall m n o p,
   m + n <= n + o /\ o + 3 = p + 3 ->
   m <= p.
 Proof.
-  intros. omega.
+  intros. lia.
 Qed.
+
+Example add_comm__lia : forall m n,
+    m + n = n + m.
+Proof.
+  intros. lia.
+Qed.
+
+Example add_assoc__lia : forall m n p,
+    m + (n + p) = m + n + p.
+Proof.
+  intros. lia.
+Qed.
+
 
 (** （注意本文件顶部 [From Coq Require Import omega.Omega.]。）*)
 
@@ -509,6 +553,9 @@ Module TooHardToRead.
 (* A small notational aside. We would previously have written the
    definition of [aevalR] like this, with explicit names for the
    hypotheses in each case: *)
+(* 撇开一个小符号。我们以前会写
+  像这样的 [aevalR] 的定义，带有明确的名称
+  每种情况下的假设: *)
 
 Inductive aevalR : aexp -> nat -> Prop :=
   | E_ANum n :
@@ -530,6 +577,10 @@ Inductive aevalR : aexp -> nat -> Prop :=
     giving their types.  This style gives us less control over the
     names that Coq chooses during proofs involving [aevalR], but it
     makes the definition itself quite a bit lighter. *)
+(** 相反，我们选择匿名假设，只是
+    给出他们的类型。这种风格让我们对
+    Coq在涉及 [aevalR] 的证明中选择的名称，但它
+    使定义本身变得更轻。 *)
 
 End TooHardToRead.
 
@@ -633,6 +684,26 @@ Inductive aevalR : aexp -> nat -> Prop :=
     请用推理规则记法将布尔求值的定义写成关系的形式。 *)
 (* 请在此处解答 *)
 
+Reserved Notation "e '=b=>' n" (at level 90, left associativity).
+
+Inductive bevalR : bexp -> bool -> Prop :=
+  | E_BTrue:
+      BTrue =b=> true
+  | E_BFalse:
+      BFalse =b=> false
+  | E_BNot (e1 : bexp) (b1 : bool):
+      (e1 =b=> b1) -> (BNot e1) =b=> (negb b1)
+  | E_BAnd (e1 e2 : bexp) (b1 b2 : bool):
+      (e1 =b=> b1) -> (e2 =b=> b2) -> (BAnd e1 e2) =b=> (andb b1 b2)
+  | E_BEq (a1 a2 : aexp) (n1 n2 : nat) :
+      (a1 ==> n1) -> (a2 ==> n2) -> (BEq a1 a2) =b=> (n1 =? n2)
+  | E_BLe (a1 a2 : aexp) (n1 n2 : nat):
+      (a1 ==> n1) -> (a2 ==> n2) -> (BLe a1 a2) =b=> (n1 <=? n2)
+
+  where "e '=b=>' n" := (bevalR e n) : type_scope.
+
+
+  
 (* 请勿修改下面这一行： *)
 Definition manual_grade_for_beval_rules : option (nat*string) := None.
 (** [] *)
@@ -696,9 +767,10 @@ Qed.
 
     用和 [aevalR] 同样的方式写出关系 [bevalR]，并证明它等价于 [beval]。 *)
 
-Inductive bevalR: bexp -> bool -> Prop :=
+(* Inductive bevalR: bexp -> bool -> Prop :=
 (* 请在此处解答 *)
-.
+在之前的习题中已经完成
+. *)
 
 Lemma beval_iff_bevalR : forall b bv,
   bevalR b bv <-> beval b = bv.
@@ -750,7 +822,9 @@ where "a '==>' n" := (aevalR a n) : type_scope.
 
 (** Notice that the evaluation relation has now become _partial_:
     There are some inputs for which it simply does not specify an
-    output. *)
+    output. 
+    请注意，评估关系现在已变为​ partial：对于某些输入，它仅未指定输出。
+    *)
 
 End aevalR_division.
 
@@ -786,6 +860,7 @@ Inductive aevalR : aexp -> nat -> Prop :=
       (a1 ==> n1) -> (a2 ==> n2) -> (AMult a1 a2) ==> (n1 * n2)
 
 where "a '==>' n" := (aevalR a n) : type_scope.
+
 
 End aevalR_extended.
 
@@ -1055,6 +1130,8 @@ Print fact_in_coq.
    END)
        : com *)
 Unset Printing Coercions.
+
+(* ? 实际测试时输出的都一样 *)
 
 (* ================================================================= *)
 (** ** [Locate] 命令 *)
@@ -1336,7 +1413,7 @@ Proof.
 
 Theorem ceval_deterministic: forall c st st1 st2,
      st =[ c ]=> st1  ->
-     st =[ c ]=> st2 ->
+     st =[ c ]=> st2  ->
      st1 = st2.
 Proof.
   intros c st st1 st2 E1 E2.
