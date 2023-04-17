@@ -6,7 +6,7 @@ My note & solutions to the Software Foundations Book
 
 贡献：
 
-- 完成部分题解
+- 完成部分题解[^1]
 - 笔记 （在 `./软件基础 课程笔记/`）
 - 其他  
   - 修正部分的翻译瑕疵，增加部分翻译[^2]
@@ -33,11 +33,12 @@ Chinese translation of _[Software Foundations](https://softwarefoundations.cis.u
 
 首卷《逻辑基础》初译完毕，亟待审校；次卷《程序语言基础》正在翻译中。此处发布的译文为 Alpha 版，错误纰漏在所难免，恳请广大读者以 Issue 等形式批评指正。
 
-[**请勿公开发布习题解答**](https://coq-zh.github.io/SF-zh/lf-current/Preface.html#lab10)[^1]
+[**请勿公开发布习题解答**](https://coq-zh.github.io/SF-zh/lf-current/Preface.html#lab10)[^4]
 
 [**Please do not post solutions to the exercises in a public place.**](https://softwarefoundations.cis.upenn.edu/lf-current/Preface.html#lab10)
 
 
-[^1]: 所以你应该对本仓库中的所有题解视而不见！
+[^1]: 真的只有小小部分
 [^2]: 只是一点无效的工作，不会被提交到翻译团队。
 [^3]: 修剪了`.git/`文件的大小 使用 `git filter-repo`
+[^4]: 所以你应该对本仓库中的所有题解视而不见！

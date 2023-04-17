@@ -1,5 +1,9 @@
 {
     "commentTranslate.multiLineMerge": true,
     "commentTranslate.hover.enabled": false,
-    "commentTranslate.source": "intellsmi.comment-translate-ali.cloud"
+    "commentTranslate.source": "intellsmi.comment-translate-ali.cloud",
+    "ocaml.sandbox": {
+        "kind": "opam",
+        "switch": "default"
+    }
 }

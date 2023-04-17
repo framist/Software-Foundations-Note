@@ -23,11 +23,14 @@ val mul : nat -> nat -> nat
 
 val sub : nat -> nat -> nat
 
-val eqb : nat -> nat -> bool
-
-val leb : nat -> nat -> bool
-
 val bool_dec : bool -> bool -> sumbool
+
+module Nat :
+ sig
+  val eqb : nat -> nat -> bool
+
+  val leb : nat -> nat -> bool
+ end
 
 type ascii =
 | Ascii of bool * bool * bool * bool * bool * bool * bool * bool

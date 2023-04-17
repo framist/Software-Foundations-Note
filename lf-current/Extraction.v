@@ -10,6 +10,8 @@
 
 Require Coq.extraction.Extraction.
 Extraction Language OCaml.
+(* Extraction Language Scheme. *)
+(* Extraction Language Haskell. *)
 
 (** 现在我们将待提取的定义加载到 Coq 环境中。你可以直接写出定义，
     也可以从其它模块中加载。 *)
@@ -22,6 +24,8 @@ From LF Require Import ImpCEvalFun.
 (** 最后，我们来指定需要提取的定义，以及用于保存提取结果的文件名。 *)
 
 Extraction "imp1.ml" ceval_step.
+(* Extraction "imp1.scm" ceval_step. *)
+(* Extraction "imp1.hs" ceval_step. *)
 
 (** Coq 在处理此指令时会生成一个名为 [imp1.ml] 的文件，其中包含了提取后的
     [ceval_step] 以及所有递归依赖的文件。编译本章对应的 [.v]

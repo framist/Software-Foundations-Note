@@ -15,11 +15,14 @@ val mul : int -> int -> int
 
 val sub : int -> int -> int
 
-val eqb : int -> int -> bool
-
-val leb : int -> int -> bool
-
 val bool_dec : bool -> bool -> sumbool
+
+module Nat :
+ sig
+  val eqb : int -> int -> bool
+
+  val leb : int -> int -> bool
+ end
 
 type ascii =
 | Ascii of bool * bool * bool * bool * bool * bool * bool * bool

@@ -7,7 +7,8 @@
 (* ################################################################# *)
 (** * 一个无法完成的求值器 *)
 
-From Coq Require Import omega.Omega.
+(* From Coq Require Import omega.Omega. *)
+From Coq Require Import Lia.
 From Coq Require Import Arith.Arith.
 From LF Require Import Imp Maps.
 
@@ -28,7 +29,7 @@ Fixpoint ceval_step1 (st : state) (c : com) : state :=
           then ceval_step1 st c1
           else ceval_step1 st c2
     | WHILE b1 DO c1 END =>
-        st  (* bogus *)
+        st  (* bogus 假的 *)
   end.
 Close Scope imp_scope.
 
@@ -174,16 +175,15 @@ Definition test_ceval (st:state) (c:com) :=
   | Some st => Some (st X, st Y, st Z)
   end.
 
-(* Compute
-     (test_ceval empty_st
-         (X ::= 2;;
-          TEST (X <= 1)
-            THEN Y ::= 3
-            ELSE Z ::= 4
-          FI)).
-   ====>
+Compute
+(test_ceval empty_st
+    (X ::= 2;;
+      TEST (X <= 1)
+        THEN Y ::= 3
+        ELSE Z ::= 4
+      FI)).
+(*    ====>
       Some (2, 0, 4)   *)
-
 (** **** 练习：2 星, standard, recommended (pup_to_n) 
 
     编写一个 Imp 程序对 [1] 到 [X] 求和（即 [1 + 2 + ... + X]）并赋值给 [Y]。
@@ -292,7 +292,7 @@ induction i1 as [|i1']; intros i2 st st' c Hle Hceval.
     simpl in Hceval. discriminate Hceval.
   - (* i1 = S i1' *)
     destruct i2 as [|i2']. inversion Hle.
-    assert (Hle': i1' <= i2') by omega.
+    assert (Hle': i1' <= i2') by lia.
     destruct c.
     + (* SKIP *)
       simpl in Hceval. inversion Hceval.
@@ -367,6 +367,6 @@ Proof.
   apply ceval_step_more with (i2 := i1 + i2) in E1.
   apply ceval_step_more with (i2 := i1 + i2) in E2.
   rewrite E1 in E2. inversion E2. reflexivity.
-  omega. omega.  Qed.
+  lia. lia. Qed.
 
 (* 2022-03-14 05:26:58 (UTC+00) *)
