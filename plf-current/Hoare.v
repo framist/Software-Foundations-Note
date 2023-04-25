@@ -6,7 +6,8 @@ From Coq Require Import Bool.Bool.
 From Coq Require Import Arith.Arith.
 From Coq Require Import Arith.EqNat.
 From Coq Require Import Arith.PeanoNat. Import Nat.
-From Coq Require Import omega.Omega.
+(* From Coq Require Import omega.Omega. *)
+From Coq Require Import Lia. (* 用于替代 omega *)
 From PLF Require Import Imp.
 
 (** 在_'逻辑基础'_（_'软件基础'_ 的第一章) 中，
@@ -674,7 +675,8 @@ Proof.
   apply hoare_consequence_pre
     with (P' := (X < 5) [X |-> X + 1]).
   apply hoare_asgn.
-  intros st H. unfold assn_sub, t_update. simpl in *. omega.
+  (* intros st H. unfold assn_sub, t_update. simpl in *. omega. *)
+  intros st H. unfold assn_sub, t_update. simpl in *. lia.
 Qed.
 
 (** 最后，为了证明中的方便，我们有一个组合起来的缩放规则，可以让
@@ -1052,11 +1054,13 @@ Proof.
     unfold bassn, assn_sub, t_update, assert_implies.
     simpl. intros st [_ H].
     apply eqb_eq in H.
-    rewrite H. omega.
+    (* rewrite H. omega. *)
+    rewrite H. lia.
   - (* Else *)
     eapply hoare_consequence_pre. apply hoare_asgn.
     unfold assn_sub, t_update, assert_implies.
-    simpl; intros st _. omega.
+    (* simpl; intros st _. omega. *)
+    simpl; intros st _. lia.
 Qed.
 
 (** **** 练习：2 星, standard (if_minus_plus) 
@@ -1293,11 +1297,13 @@ Proof.
   eapply hoare_consequence_pre.
   apply hoare_asgn.
   unfold bassn, assn_sub, assert_implies, t_update. simpl.
-    intros st [H1 H2]. apply leb_complete in H2. omega.
+    (* intros st [H1 H2]. apply leb_complete in H2. omega. *)
+    intros st [H1 H2]. apply leb_complete in H2. lia.
   unfold bassn, assert_implies. intros st [Hle Hb].
     simpl in Hb. destruct ((st X) <=? 2) eqn : Heqle.
     exfalso. apply Hb; reflexivity.
-    apply leb_iff_conv in Heqle. simpl in *. omega.
+    (* apply leb_iff_conv in Heqle. simpl in *. omega. *)
+    apply leb_iff_conv in Heqle. simpl in *. lia.
 Qed.
 (** 我们可以使用 WHILE 规则来证明下列的霍尔三元组。 *)
 

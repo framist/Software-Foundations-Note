@@ -6,8 +6,9 @@ From Coq Require Import Bool.Bool.
 From Coq Require Import Arith.Arith.
 From Coq Require Import Init.Nat.
 From Coq Require Import Arith.PeanoNat. Import Nat.
-From Coq Require Import Arith.EqNat.
-From Coq Require Import omega.Omega.
+(* From Coq Require Import omega.Omega. *)
+From Coq Require Import Lia. (* 用于替代 omega *)
+From Coq Require Import Lia.
 From Coq Require Import Lists.List.
 From Coq Require Import Logic.FunctionalExtensionality.
 Import ListNotations.
@@ -59,7 +60,8 @@ Definition bequiv (b1 b2 : bexp) : Prop :=
 
 Theorem aequiv_example: aequiv (X - X) 0.
 Proof.
-  intros st. simpl. omega.
+  (* intros st. simpl. omega. *)
+  intros st. simpl. lia.
 Qed.
 
 Theorem bequiv_example: bequiv (X - X = 0) true.

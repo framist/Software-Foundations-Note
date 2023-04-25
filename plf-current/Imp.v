@@ -23,7 +23,8 @@ From Coq Require Import Bool.Bool.
 From Coq Require Import Init.Nat.
 From Coq Require Import Arith.Arith.
 From Coq Require Import Arith.EqNat.
-From Coq Require Import omega.Omega.
+(* From Coq Require Import omega.Omega. *)
+From Coq Require Import Lia. (* 用于替代 omega *)
 From Coq Require Import Lists.List.
 From Coq Require Import Strings.String.
 Import ListNotations.
@@ -445,7 +446,8 @@ Example silly_presburger_example : forall m n o p,
   m + n <= n + o /\ o + 3 = p + 3 ->
   m <= p.
 Proof.
-  intros. omega.
+  (* intros. omega. *)
+  intros. lia.
 Qed.
 
 (** （注意本文件顶部 [From Coq Require Import omega.Omega.]。）*)
