@@ -630,7 +630,7 @@ Example congruence_example:
      ELSE
        Y ::= 42
      FI)
-    (* 程序 1： *)
+    (* 程序 2： *)
     (X ::= 0;;
      TEST X = 0
      THEN
@@ -644,7 +644,7 @@ Proof.
   - apply CIf_congruence.
     + apply refl_bequiv.
     + apply CAss_congruence. unfold aequiv. simpl.
-      * symmetry. apply minus_diag.
+      * symmetry. apply Nat.sub_diag. (* apply minus_diag. *)
     + apply refl_cequiv.
 Qed.
 
@@ -1242,7 +1242,7 @@ Proof.
     语言定义中的大部分非确定性来源于程序员对语言所做的选择不那么关心
     （好处是能让编译器选择更快的运行方式）。
 
-    我们称这个心语言为_'Himp'_（“用 [HAVOC] 扩展的 Imp”）。 *)
+    我们称这个新语言为_'Himp'_（“用 [HAVOC] 扩展的 Imp”）。 *)
 
 Module Himp.
 
