@@ -103,7 +103,18 @@ Definition as5 : Assertion :=
 Definition as6 : Assertion := fun st => True.
 Definition as7: Assertion := fun st => False.
 (* 请在此处解答 *)
+(* #GPT#
+as1: 断言 as1 表示变量 X 的值在状态 st 中为 3。
+as2: 断言 as2 表示变量 Y 的值不小于等于变量 X 的值。
+as3: 断言 as3 表示变量 X 的值等于 3 或者变量 X 的值不大于变量 Y 的值。
+as4: 断言 as4 包含两个谓词：
+  第一个谓词表示变量 Z 的平方小于等于变量 X，
+  第二个谓词表示变量 Z 的后继的平方大于变量 X。
+as5: 断言 as5 表示变量 Z 的值等于变量 X 和变量 Y 中的最大值。
+as6: 断言 as6 总是成立，它表示“不论状态是什么，它总是满足条件”。
+as7: 断言 as7 总是不成立，它表示“不存在任何状态使得其满足该条件”。 *)
 End ExAssertions.
+
 (** [] *)
 
 (** 这种写下断言的方式可能过于繁琐，理由如下：
@@ -153,7 +164,15 @@ Notation "P <<->> Q" :=
     as we did with [%imp] in [Imp]) to automatically lift
     [aexp]s, numbers, and [Prop]s into [Assertion]s when they appear
     in the [%assertion] scope or when Coq knows the type of an
-    expression is [Assertion]. *)
+    expression is [Assertion]. 
+    我们实际上可以在 Coq 的正式语法中，使用我们的非正式约定来编写断言，
+    而不需要显式地提及状态。
+    这种技术使用了 Coq 强制转换和注释作用域（就像我们在 [Imp] 中使用 [%imp] 一样），
+    当 [aexp]、数字和 [Prop] 出现在 [%assertion] 范围内
+    或当 Coq 知道表达式的类型是 [Assertion] 时，
+    它们会自动提升为 [Assertion]。
+    *)
+
 
 Definition Aexp : Type := state -> nat.
 
@@ -195,7 +214,10 @@ Notation "a * b" := (fun st => mkAexp a st * mkAexp b st) : assertion_scope.
 (** One small limitation of this approach is that we don't have
     an automatic way to coerce function applications that appear
     within an assertion to make appropriate use of the state.
-    Instead, we use an explicit [ap] operator to lift the function. *)
+    Instead, we use an explicit [ap] operator to lift the function. 
+    这种方法的一个小限制是，
+    我们没有一种自动的方式来强制函数应用程序在断言中适当地使用状态。
+    相反，我们使用显式的 [ap] 运算符来提升函数。 *)
 
 Definition ap {X} (f : nat -> X) (x : Aexp) :=
   fun st => f (x st).
@@ -256,20 +278,21 @@ Notation "{{ P }}  c  {{ Q }}" :=
     用中文重新表述下列霍尔三元组。
 
    1) {{True}} c {{X = 5}}
-
+当程序执行c时，如果X的值为5，则前提条件True成立。
    2) {{X = m}} c {{X = m + 5)}}
-
+当程序执行c时，如果X的初始值为m，则程序结束后X的值为m+5。
    3) {{X <= Y}} c {{Y <= X}}
-
+当程序执行c时，如果X的值小于等于Y，则程序结束后Y的值大于等于X。
    4) {{True}} c {{False}}
-
+？当程序执行c时，不停机
    5) {{X = m}}
       c
       {{Y = real_fact m}}
-
+当程序执行c时，如果X的初始值为m，则程序结束后Y的值为实际上的m的因子。
    6) {{X = m}}
       c
       {{(Z * Z) <= m /\ ~ (((S Z) * (S Z)) <= m)}}
+当程序执行c时，如果X的初始值为m，则程序结束时Z的平方小于等于 m 且(S Z)的平方不大于m。      
 *)
 (* 请在此处解答
 
@@ -281,26 +304,27 @@ Notation "{{ P }}  c  {{ Q }}" :=
     关系是否为真？
 
    1) {{True}} X ::= 5 {{X = 5}}
-
+成立，5赋值给X后X的值为5。
    2) {{X = 2}} X ::= X + 1 {{X = 3}}
-
+成立，2加1等于3，因此X的值变为3。
    3) {{True}} X ::= 5;; Y ::= 0 {{X = 5}}
-
+成立，先将X的值赋为5，接着将Y赋值为0，最终X的值为5。
    4) {{X = 2 /\ X = 3}} X ::= 5 {{X = 0}}
-
+不成立，由前提条件得知X的值不能既为2又为3，因此该霍尔三元组不成立。
    5) {{True}} SKIP {{False}}
-
+不成立，SKIP执行时不会改变程序状态，断言的结论False非真。
    6) {{False}} SKIP {{True}}
-
+成立，前提条件False永远不成立，所以该霍尔三元组成立。
    7) {{True}} WHILE true DO SKIP END {{False}}
-
+？成立，这个循环会一直执行下去，因此后面的断言False非真
    8) {{X = 0}}
         WHILE X = 0 DO X ::= X + 1 END
       {{X = 1}}
-
+成立，X的初始值为0，进入while循环后将X的值设为1，因此在while循环结束时X的值为1，符合断言的结论。
    9) {{X = 1}}
         WHILE ~(X = 0) DO X ::= X + 1 END
       {{X = 100}}
+不成立。
 *)
 (* 请在此处解答
 
@@ -316,6 +340,7 @@ Proof.
   intros P Q c H. unfold hoare_triple.
   intros st st' Heval HP.
   apply H.  Qed.
+(* Q 恒真，则霍尔三元组成立 *)
 
 Theorem hoare_pre_false : forall (P Q : Assertion) c,
   (forall st, ~ (P st)) ->
@@ -325,6 +350,7 @@ Proof.
   intros st st' Heval HP.
   unfold not in H. apply H in HP.
   inversion HP.  Qed.
+(* P 恒假，则霍尔三元组成立 *)
 
 (* ################################################################# *)
 (** * 证明规则 *)
