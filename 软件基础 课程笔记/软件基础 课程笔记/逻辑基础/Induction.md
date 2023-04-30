@@ -1,7 +1,7 @@
 ---
 title: Induction
 date: 2023-04-16T16:04:09Z
-lastmod: 2023-04-16T16:11:16Z
+lastmod: 2023-04-25T16:02:11Z
 ---
 
 # Induction
@@ -17,7 +17,7 @@ lastmod: 2023-04-16T16:11:16Z
 
 安装 coq 参考：
 
-```coq
+```bash
 # ubuntu
 sudo snap install coq-prover
 # arch
